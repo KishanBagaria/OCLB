@@ -6,8 +6,8 @@
 // @version             2.2
 // @match               *://*.deviantart.com/*
 // @grant               none
-// @downloadURL         https://dl.dropboxusercontent.com/u/4024184/OCLB.user.js
-// @updateURL           https://dl.dropboxusercontent.com/u/4024184/OCLB.user.js
+// @downloadURL         https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
+// @updateURL           https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
 // ==/UserScript==
 function contentEval(source) {
     if ('function' === typeof source) {
