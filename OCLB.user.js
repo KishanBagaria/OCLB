@@ -80,9 +80,9 @@ contentEval(function () {
 
         var storage = function(action, key, value) {
             try {
-                return localStorage[action + 'Item'](key, value);
+                return window.localStorage[action + 'Item'](key, value);
             } catch(er) {
-                localStorage.clear();
+                window.localStorage.clear();
             }
         };
 
