@@ -3,7 +3,7 @@
 // @namespace           http://www.door2windows.com/
 // @description         Adds a give Llama button after username of every deviant and group.
 // @author              Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version             2.3
+// @version             2.3.1
 // @match               *://*.deviantart.com/*
 // @grant               none
 // @downloadURL         https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
