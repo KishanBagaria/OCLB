@@ -3,7 +3,7 @@
 // @namespace           http://www.door2windows.com/
 // @description         Adds a give Llama button after username of every deviant and group.
 // @author              Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version             2.3.1
+// @version             2.4
 // @match               *://*.deviantart.com/*
 // @grant               none
 // @downloadURL         https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
@@ -93,7 +93,7 @@ contentEval(function () {
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', '/global/difi/?c[]="User","getGiveMenu",["' + devName + '"]&t=json&' + Math.floor(Date.now() / 1e4), true);
                 xhr.onload = function () {
-                    var devID = /Badges\.buildModal\(\'llama\', (\d+)\)/.exec(this.response),
+                    var devID = /data-userid=\\"(\d+?)\\"/.exec(this.response),
                         alreadyGiven = (this.response.indexOf('Already gave a Llama') !== -1);
                     if (alreadyGiven) { 
                         storage('set', loggedInDev + '|' + devName, false);
