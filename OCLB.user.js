@@ -222,8 +222,8 @@ runJS(function() {
                 }), '*');
             }
         } else if (window.location.host !== 'llamatrade.deviantart.com') {
-            addCSS(STYLE);
             if (loggedInDev) {
+                addCSS(STYLE);
                 waitForElements('a.username', addLlamaButton);
                 waitForElements('a[href*=".deviantart.com/badges/"]', addLlamaButton);
                 window.addEventListener('message', postMessageListener);
