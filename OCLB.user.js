@@ -90,7 +90,9 @@ runJS(function() {
         var llamaButtonClicked = function() {
             if (['give', 'error', 'spam'].indexOf(this.className.substr(10)) !== -1) {
                 var devName = this.getAttribute('devName'),
-                    url = 'https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=http%3A%2F%2Fdeviantart.com&to_user=' + devIDs[devName],
+                    url = 'https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer='
+                        + window.location.protocol + '//' + window.location.hostname
+                        + '&to_user=' + devIDs[devName],
                     iframe = document.createElement('iframe');
                 setButtonsState(devName, 'giving');
                 iframe.style.display = 'none';
@@ -165,7 +167,7 @@ runJS(function() {
             }
         };
 
-        var postMessageListener = function(e) {
+        var messageListener = function(e) {
             if (e.data.slice(0, 6) === '{\"oclb') {
                 var data = JSON.parse(e.data),
                     devName = data.devName,
@@ -219,14 +221,14 @@ runJS(function() {
                     devName: document.getElementsByClassName('username')[0].textContent.toLowerCase(),
                     successText: successText,
                     errorText: errorText
-                }), '*');
+                }), document.getElementById('referrer').value);
             }
         } else if (window.location.host !== 'llamatrade.deviantart.com') {
             if (loggedInDev) {
                 addCSS(STYLE);
                 waitForElements('a.username', addLlamaButton);
                 waitForElements('a[href*=".deviantart.com/badges/"]', addLlamaButton);
-                window.addEventListener('message', postMessageListener);
+                window.addEventListener('message', messageListener);
                 window.addEventListener('storage', storageListener);
             }
         }
