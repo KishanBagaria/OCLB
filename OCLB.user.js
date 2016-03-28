@@ -138,16 +138,16 @@ runJS(function() {
                     var llamaButton = document.createElement('span');
                     llamaButton.setAttribute('devName', devName);
                     llamaButton.onclick = llamaButtonClicked;
-                    setButtonState(llamaButton, 'unknown', U_LOADING_TITLE);
-                    // Remove .nextSibling to make buttons appear before username
-                    devNameLink.parentNode.insertBefore(llamaButton, devNameLink.nextSibling);
                     if (lastStates.hasOwnProperty(devName)) {
                         setButtonState(llamaButton, lastStates[devName]);
                     } else if (storage('get', loggedInDev + '|' + devName)) {
                         setButtonState(llamaButton, 'already');
                     } else {
+                        setButtonState(llamaButton, 'unknown', U_LOADING_TITLE);
                         askServerForStatus(llamaButton, devName);
                     }
+                    // Remove .nextSibling to make buttons appear before username
+                    devNameLink.parentNode.insertBefore(llamaButton, devNameLink.nextSibling);
                 }
             }
         };
@@ -233,9 +233,8 @@ runJS(function() {
             }
         }
     } catch (err) {
-        var h = 'One Click Llama Button encountered an error:\n',
-            e = h + '\n---\n' + err + '\n---\n\nPlease report this to Kishan-Bagaria.DeviantArt.com';
-        console.error(h, err);
-        alert(e);
+        var heading = 'One Click Llama Button encountered an error:\n';
+        console.error(heading, err);
+        alert(heading + '\n---\n' + err + '\n---\n\nPlease report this to Kishan-Bagaria.DeviantArt.com');
     }
 });
