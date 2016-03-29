@@ -8,6 +8,7 @@
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
 // @grant           GM_setValue
+// @run-at          document-end
 // @downloadURL     https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
 // @updateURL       https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
 // ==/UserScript==
