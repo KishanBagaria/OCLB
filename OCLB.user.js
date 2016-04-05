@@ -31,7 +31,7 @@ runJS(function() {
     UNKNOWN_IMG = 'data:image/gif;base64,R0lGODlhDAASAPABAJOpjwAAACH5BAUAAAEALAAAAAAMABIAAAImjA8QeWi62nNyKVZvzFTC7XXJSH2g1Zho5aglC44yFmnaZJ+ypRQAOw==';
 
     var STYLE =
-        'span.oclb        {display:inline-block;width:18px;height:18px;vertical-align:middle;margin:0 3px;transition:.3s all}' +
+        'span.oclb        {display:inline-block;pointer-events:all;width:18px;height:18px;vertical-align:middle;margin:0 3px;transition:.3s all}' +
         'span.oclb-give   {background:url(' + GIVE_IMG + ')    center no-repeat;cursor:pointer}' +
         'span.oclb-giving {background:url(' + GIVING_IMG + ')  center no-repeat;cursor:progress}' +
         'span.oclb-already{background:url(' + ALREADY_IMG + ') center no-repeat;margin:0}' +
