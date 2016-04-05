@@ -3,16 +3,17 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after username of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         3.1.2
+// @version         3.2
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
 // @grant           GM_setValue
+// @grant           unsafeWindow
 // @run-at          document-end
 // @downloadURL     https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
 // @updateURL       https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
 // ==/UserScript==
-try {gmSet = GM_setValue; gmGet = GM_getValue;} catch (e) {}
+try {unsafeWindow.gmSet = GM_setValue; unsafeWindow.gmGet = GM_getValue;} catch (e) {}
 function runJS(source) {
     if ('function' === typeof source) source = '(' + source + ')();';
     var script = document.createElement('script');
@@ -79,10 +80,9 @@ runJS(function() {
         };
         var setting = function(key, value) {
             if (value) {
-                if (gmSet) gmSet(key, value);
+                if (typeof gmSet !== 'undefined') gmSet(key, value);
             } else {
-                var ret;
-                if (typeof gmGet !== 'undefined') ret = gmGet(key);
+                var ret = (typeof gmGet === 'undefined') || gmGet(key);
                 return ret || DEFAULTS[key];
             }
         };
