@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after username of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         3.4
+// @version         3.4.1
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
@@ -333,11 +333,16 @@ runJS(function() {
             });
         } else {
             if (window.location.href.includes('badge/give?badgetype=llama')) {
-                document.addEventListener('DOMContentLoaded', function() {
+                var fillForm = function() {
                     document.give_form.tos.checked = true;
                     document.give_form.password_remembered.checked = true;
                     document.give_form.submit();
-                });
+                };
+                if (navigator.userAgent.includes('Firefox')) {
+                    document.addEventListener('DOMContentLoaded', fillForm);
+                } else {
+                    fillForm();
+                }
             } else if (window.location.href.includes('badge/process_trade')) {
                 if (document.getElementsByClassName('badge-llama').length > 0) {
                     var successElement = document.querySelector('#badgeReceiptBody > div'),
