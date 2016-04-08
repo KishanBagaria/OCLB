@@ -325,6 +325,12 @@ runJS(function() {
                     };
                 }
             });
+            addCSS(STYLE);
+            if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
+            var hidden = document.querySelectorAll('[data-oclb-not-loaded]');
+            forEach(hidden, function(h) {
+                h.removeAttribute('data-oclb-not-loaded');
+            });
         } else {
             if (window.location.href.includes('badge/give?badgetype=llama')) {
                 document.addEventListener('DOMContentLoaded', function() {
