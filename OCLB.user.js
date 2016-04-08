@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after username of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         3.3
+// @version         3.4
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
@@ -86,6 +86,30 @@ runJS(function() {
         devIDs = {};
 
     try {
+        if (!String.prototype.endsWith) {
+            String.prototype.endsWith = function(searchString, position) {
+                var subjectString = this.toString();
+                if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+                    position = subjectString.length;
+                }
+                position -= searchString.length;
+                var lastIndex = subjectString.indexOf(searchString, position);
+                return lastIndex !== -1 && lastIndex === position;
+            };
+        }
+        if (!String.prototype.includes) {
+            String.prototype.includes = function(search, start) {
+                'use strict';
+                if (typeof start !== 'number') {
+                    start = 0;
+                }
+                if (start + search.length > this.length) {
+                    return false;
+                } else {
+                    return this.indexOf(search, start) !== -1;
+                }
+            };
+        }
         var forEach = function(array, callback) {
             for (var i = 0; i < array.length; i++) callback(array[i], i);
         };
@@ -161,13 +185,14 @@ runJS(function() {
                 var devID = /data-userid=\\"(\d+?)\\"/.exec(this.response);
                 if (devID) {
                     devIDs[devName] = devID[1];
-                    var alreadyGiven = (this.response.indexOf('Already gave a Llama') !== -1);
-                    setButtonState(llamaButton, (alreadyGiven ? 'already' : 'give'));
-                    if (alreadyGiven)
+                    if (this.response.includes('Already gave a Llama')) {
                         storage('set', loggedInDev + '|' + devName, 0);
-                } else {
-                    setButtonState(llamaButton, 'unknown', U_UNKERR_TITLE);
+                        setButtonState(llamaButton, 'already'); return;
+                    } else if (this.response.includes('Give a <span>Llama Badge')) {
+                        setButtonState(llamaButton, 'give'); return;
+                    }
                 }
+                setButtonState(llamaButton, 'unknown', U_UNKERR_TITLE);
             };
             xhr.onerror = function() {
                 setButtonState(llamaButton, 'unknown', U_NETERR_TITLE);
@@ -176,7 +201,7 @@ runJS(function() {
         };
 
         var addLlamaButton = function(devNameLink) {
-            if (devNameLink.className.indexOf('banned') !== -1) return;
+            if (devNameLink.className.includes('banned')) return;
             var devName = /([a-zA-Z0-9\-]+)\.deviantart\.com/.exec(devNameLink.href);
             if (devName) {
                 devName = devName[1].toLowerCase();
@@ -199,19 +224,28 @@ runJS(function() {
         };
         var addLlamaButtons = function() {
             var addEverywhere = function() {
-                window.addEventListener('storage', storageListener);
                 waitForElements('a.username', addLlamaButton);
                 waitForElements('a[href*=".deviantart.com/badges/"]', addLlamaButton);
             };
-            var showIn = setting('showIn');
-            if (showIn === '*') {
-                addEverywhere();
-            } else if (showIn === 'profile') {
+            var addInCatBar = function() {
                 var devNameLink = document.querySelector('div.gruserbadge a.username');
                 if (devNameLink) addLlamaButton(devNameLink);
+            };
+            var showIn = setting('showIn');
+            if (showIn === '*') {
+                window.addEventListener('storage', storageListener);
+                if (window.location.href.endsWith('/badges/')) {
+                    addInCatBar();
+                    waitForElements('.ll a.username', addLlamaButton);
+                } else {
+                    addEverywhere();
+                }
+            } else if (showIn === 'profile') {
+                addInCatBar();
             } else if (showIn === 'notifycenter') {
-                if (window.location.href.indexOf('/notifications/') < 0)
+                if (!window.location.href.includes('/notifications/'))
                     return;
+                window.addEventListener('storage', storageListener);
                 addEverywhere();
             }
             addCSS(STYLE);
@@ -244,19 +278,19 @@ runJS(function() {
                     oclbFrame = document.getElementById('oclb-frame-' + devName);
                 clearTimeout(timeouts[devName]);
                 delete timeouts[devName];
-                if (successText.indexOf('Success!') !== -1) {
+                if (successText.includes('Success!')) {
                     setButtonsState(devName, 'success', successText);
                     storage('set', loggedInDev + '|' + devName, 0);
-                } else if (errorText.indexOf('You cannot give any more llama badges to ') !== -1 || errorText === 'Cannot give badge to this user') {
+                } else if (errorText.includes('You cannot give any more llama badges to') || errorText.includes('Cannot give badge to this user')) {
                     setButtonsState(devName, 'already');
                     storage('set', loggedInDev + '|' + devName, 0);
-                } else if (errorText.indexOf('Badges have been given too quickly, and have tripped a spam filter') !== -1) {
+                } else if (errorText.includes('Badges have been given too quickly, and have tripped a spam filter')) {
                     setButtonsState(devName, 'spam', errorText);
                 } else {
                     setButtonsState(devName, 'error', errorText);
                     if (oclbFrame) {
-                        if (errorText === 'Please enter a password.') {
-                            alert('One Click Llama Button will start working after you give a Llama manually with the "Remember my password" option checked.');
+                        if (errorText.includes('Please enter a password')) {
+                            alert('One Click Llama Button will start working after you give a Llama manually (the normal way) with the "Remember my password" option checked.');
                         } else {
                             alert(errorText + (successText ? '\n\n\n' + successText : ''));
                         }
@@ -292,11 +326,13 @@ runJS(function() {
                 }
             });
         } else {
-            if (window.location.href.indexOf('badge/give?badgetype=llama') > -1) {
-                document.give_form.tos.checked = true;
-                document.give_form.password_remembered.checked = true;
-                document.give_form.submit();
-            } else if (window.location.href.indexOf('badge/process_trade') > -1) {
+            if (window.location.href.includes('badge/give?badgetype=llama')) {
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.give_form.tos.checked = true;
+                    document.give_form.password_remembered.checked = true;
+                    document.give_form.submit();
+                });
+            } else if (window.location.href.includes('badge/process_trade')) {
                 if (document.getElementsByClassName('badge-llama').length > 0) {
                     var successElement = document.querySelector('#badgeReceiptBody > div'),
                         errorElement = document.querySelector('#error_messages > ul > li'),
