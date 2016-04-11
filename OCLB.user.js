@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            One Click Llama Button
 // @namespace       http://www.door2windows.com/
-// @description     Adds a give Llama button after username of every deviant and group.
+// @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         3.4.1
+// @version         3.5
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
@@ -46,14 +46,16 @@ runJS(function() {
         R_UNKNOWN_IMG = 'data:image/gif;base64,R0lGODlhGAAkAPABAJOpjwAAACH5BAUAAAEALAAAAAAYACQAAAJqjI8GC8oJD2thxrRQlvRup3VXJYJjCH0nuVmr0z4vaapnbL42Pe+7V+Lpgr+ILwhMESdMpZIpQ3GSRkrxGsUgOdhbdsbdDnM9UZFKHk/BwjD0vYTDnTxcu2bNp+t6Pt1u99TE8uUmA2VQAAA7';
 
     var STYLE =
-        'span.oclb        {display:inline-block;pointer-events:all;width:18px;height:18px;vertical-align:middle;margin:0 3px;transition:.3s all}' +
+        'span.oclb        {display:inline-block;pointer-events:all;width:18px;height:18px;vertical-align:middle;margin:0 3px;cursor:default;transition:.3s all}' +
         'span.oclb-give   {background:url(' + GIVE_IMG + ')    center no-repeat;cursor:pointer}' +
         'span.oclb-giving {background:url(' + GIVING_IMG + ')  center no-repeat;cursor:progress}' +
         'span.oclb-already{background:url(' + ALREADY_IMG + ') center no-repeat;margin:0}' +
         'span.oclb-success{background:url(' + SUCCESS_IMG + ') center no-repeat;width:26px}' +
         'span.oclb-error  {background:url(' + ERROR_IMG + ')   center no-repeat;cursor:pointer}' +
         'span.oclb-spam   {background:url(' + SPAM_IMG + ')    center no-repeat;cursor:pointer;width:25px}' +
-        'span.oclb-unknown{background:url(' + UNKNOWN_IMG + ') center no-repeat;cursor:help}',
+        'span.oclb-unknown{background:url(' + UNKNOWN_IMG + ') center no-repeat;cursor:help}' +
+        'span.oclb-enough {width:28px}' +
+        'span.oclb-enough:after{color:#f6e16e;background:#4A270D;content:"100k";font:10px/17px Trebuchet MS;text-align:center;letter-spacing:0;vertical-align:top;border-radius:4px;padding:0 3px;display:block}',
         RETINA_STYLE =
         'span.oclb        {background-size:auto 18px}' +
         'span.oclb-give   {background-image:url(' + R_GIVE_IMG + ')}' +
@@ -72,16 +74,19 @@ runJS(function() {
             give: 'Give a Llama',
             giving: 'Giving Llama...',
             already: 'Already gave a Llama',
+            enough: 'Has Llamas enough for love',
             unknown: UNKNOWN_TITLE
         },
         DEFAULTS = {
             showIn: '*',
             showPos: 'after',
+            addForGroups: 'true',
             animation: 'true'
-        };
+        },
+        HAS_ENOUGH_FOR_LOVE = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum'];
 
     var loggedInDev = window.deviantART ? window.deviantART.deviant.username.toLowerCase() : '',
-        timeouts = {},
+        errorTimeouts = {},
         lastStates = {},
         devIDs = {};
 
@@ -108,6 +113,11 @@ runJS(function() {
                 } else {
                     return this.indexOf(search, start) !== -1;
                 }
+            };
+        }
+        if (!Array.prototype.includes) {
+            Array.prototype.includes = function(search) {
+                return this.indexOf(search) !== -1;
             };
         }
         var forEach = function(array, callback) {
@@ -141,8 +151,9 @@ runJS(function() {
             if (!title) title = TITLES[className];
             if (title) llamaButton.title = title;
         };
-        var setButtonsState = function(devName, className, title, interTab) {
-            if (!interTab) {
+        var spamTimeouts = {};
+        var setButtonsState = function(devName, className, title, dontTellOtherTabs) {
+            if (!dontTellOtherTabs) {
                 storage('set', 'sbsCall', JSON.stringify({
                     loggedInDev: loggedInDev,
                     devName: devName,
@@ -150,7 +161,13 @@ runJS(function() {
                     title: title
                 }));
             }
-            lastStates[devName] = className;
+            if (spamTimeouts.hasOwnProperty(devName)) clearTimeout(spamTimeouts[devName]);
+            if (className === 'spam') {
+                spamTimeouts[devName] = setTimeout(function() {
+                    setButtonsState(devName, 'give', true);
+                }, 1000);
+            }
+            if (className !== 'give') lastStates[devName] = {className: className, title: title};
             var llamaButtons = document.querySelectorAll('span[devName="' + devName + '"]');
             forEach(llamaButtons, function(llamaButton) {
                 setButtonState(llamaButton, className, title);
@@ -158,7 +175,7 @@ runJS(function() {
         };
 
         var llamaButtonClicked = function() {
-            if (['give', 'error', 'spam'].indexOf(this.className.substr(10)) !== -1) {
+            if (['give', 'error', 'spam'].includes(this.className.substr(10))) { // 10 === 'oclb oclb-'.length
                 var devName = this.getAttribute('devName'),
                     url = 'https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=' +
                     window.location.protocol + '//' + window.location.hostname +
@@ -169,8 +186,8 @@ runJS(function() {
                 iframe.src = url;
                 iframe.id = 'oclb-frame-' + devName;
                 document.body.appendChild(iframe);
-                clearTimeout(timeouts[devName]);
-                timeouts[devName] = setTimeout(function() {
+                clearTimeout(errorTimeouts[devName]);
+                errorTimeouts[devName] = setTimeout(function() {
                     var oclbFrame = document.getElementById('oclb-frame-' + devName);
                     if (oclbFrame) oclbFrame.remove();
                     setButtonsState(devName, 'error', 'Timeout');
@@ -190,6 +207,8 @@ runJS(function() {
                         setButtonState(llamaButton, 'already'); return;
                     } else if (this.response.includes('Give a <span>Llama Badge')) {
                         setButtonState(llamaButton, 'give'); return;
+                    } else if (this.response.includes('Has Llamas enough for love')) {
+                        setButtonState(llamaButton, 'enough'); return;
                     }
                 }
                 setButtonState(llamaButton, 'unknown', U_UNKERR_TITLE);
@@ -210,7 +229,9 @@ runJS(function() {
                     llamaButton.setAttribute('devName', devName);
                     llamaButton.onclick = llamaButtonClicked;
                     if (lastStates.hasOwnProperty(devName)) {
-                        setButtonState(llamaButton, lastStates[devName]);
+                        setButtonState(llamaButton, lastStates[devName].className, lastStates[devName].title);
+                    } else if (HAS_ENOUGH_FOR_LOVE.includes(devName)) {
+                        setButtonState(llamaButton, 'enough');
                     } else if (storage('get', loggedInDev + '|' + devName)) {
                         setButtonState(llamaButton, 'already');
                     } else {
@@ -223,12 +244,13 @@ runJS(function() {
             }
         };
         var addLlamaButtons = function() {
+            var linkSelector = (setting('addForGroups') === 'true' ? 'a.username' : 'a.username:not(.group)');
             var addEverywhere = function() {
-                waitForElements('a.username', addLlamaButton);
+                waitForElements(linkSelector, addLlamaButton);
                 waitForElements('a[href*=".deviantart.com/badges/"]', addLlamaButton);
             };
             var addInCatBar = function() {
-                var devNameLink = document.querySelector('div.gruserbadge a.username');
+                var devNameLink = document.querySelector('div.gruserbadge ' + linkSelector);
                 if (devNameLink) addLlamaButton(devNameLink);
             };
             var showIn = setting('showIn');
@@ -236,7 +258,7 @@ runJS(function() {
                 window.addEventListener('storage', storageListener);
                 if (window.location.href.endsWith('/badges/')) {
                     addInCatBar();
-                    waitForElements('.ll a.username', addLlamaButton);
+                    waitForElements('.ll ' + linkSelector, addLlamaButton);
                 } else {
                     addEverywhere();
                 }
@@ -276,8 +298,8 @@ runJS(function() {
                     successText = data.successText,
                     errorText = data.errorText,
                     oclbFrame = document.getElementById('oclb-frame-' + devName);
-                clearTimeout(timeouts[devName]);
-                delete timeouts[devName];
+                clearTimeout(errorTimeouts[devName]);
+                delete errorTimeouts[devName];
                 if (successText.includes('Success!')) {
                     setButtonsState(devName, 'success', successText);
                     storage('set', loggedInDev + '|' + devName, 0);
@@ -363,6 +385,6 @@ runJS(function() {
     } catch (err) {
         var heading = 'One Click Llama Button encountered an error:\n';
         console.error(heading, err);
-        alert(heading + '\n---\n' + err + '\n---\n\nPlease report this to Kishan-Bagaria.DeviantArt.com');
+        alert(heading + '\n---\n' + err + '\n---\n\nPlease send a screenshot of this to Kishan-Bagaria.DeviantArt.com');
     }
 });
