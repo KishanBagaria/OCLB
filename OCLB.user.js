@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         3.5
+// @version         3.5.1
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
@@ -115,11 +115,10 @@ runJS(function() {
                 }
             };
         }
-        if (!Array.prototype.includes) {
-            Array.prototype.includes = function(search) {
-                return this.indexOf(search) !== -1;
-            };
-        }
+        // Not polyfilling Array#includes because DA has buggy JS that breaks the notification center in older browsers
+        var _includes = function(array, search) {
+            return array.indexOf(search) !== -1;
+        };
         var forEach = function(array, callback) {
             for (var i = 0; i < array.length; i++) callback(array[i], i);
         };
@@ -175,7 +174,7 @@ runJS(function() {
         };
 
         var llamaButtonClicked = function() {
-            if (['give', 'error', 'spam'].includes(this.className.substr(10))) { // 10 === 'oclb oclb-'.length
+            if (_includes(['give', 'error', 'spam'], this.className.substr(10))) { // 10 === 'oclb oclb-'.length
                 var devName = this.getAttribute('devName'),
                     url = 'https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=' +
                     window.location.protocol + '//' + window.location.hostname +
@@ -230,7 +229,7 @@ runJS(function() {
                     llamaButton.onclick = llamaButtonClicked;
                     if (lastStates.hasOwnProperty(devName)) {
                         setButtonState(llamaButton, lastStates[devName].className, lastStates[devName].title);
-                    } else if (HAS_ENOUGH_FOR_LOVE.includes(devName)) {
+                    } else if (_includes(HAS_ENOUGH_FOR_LOVE, devName)) {
                         setButtonState(llamaButton, 'enough');
                     } else if (storage('get', loggedInDev + '|' + devName)) {
                         setButtonState(llamaButton, 'already');
