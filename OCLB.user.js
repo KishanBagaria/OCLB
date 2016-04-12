@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         3.6
+// @version         3.6.1
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/preferences/
 // @grant           GM_getValue
@@ -154,7 +154,7 @@ runJS(function() {
             if (!title) title = TITLES[className];
             if (title) llamaButton.title = title;
         };
-        //var spamTimeouts = {};
+        var spamTimeouts = {};
         var setButtonsState = function(devName, className, title, dontTellOtherTabs) {
             if (!dontTellOtherTabs) {
                 storage('set', 'sbsCall', JSON.stringify({
@@ -164,12 +164,12 @@ runJS(function() {
                     title: title
                 }));
             }
-            // if (spamTimeouts.hasOwnProperty(devName)) clearTimeout(spamTimeouts[devName]);
-            // if (className === 'spam') {
-            //     spamTimeouts[devName] = setTimeout(function() {
-            //         setButtonsState(devName, 'give', true);
-            //     }, 1000);
-            // }
+            if (spamTimeouts.hasOwnProperty(devName)) clearTimeout(spamTimeouts[devName]);
+            if (className === 'spam') {
+                spamTimeouts[devName] = setTimeout(function() {
+                    setButtonsState(devName, 'give', true);
+                }, 60e3);
+            }
             if (className !== 'give') lastStates[devName] = {className: className, title: title};
             var llamaButtons = document.querySelectorAll('span[devName="' + devName + '"]');
             forEach(llamaButtons, function(llamaButton) {
