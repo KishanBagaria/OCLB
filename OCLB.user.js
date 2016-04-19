@@ -165,10 +165,7 @@ addJS(function() {
                     setButtonsState(devName, 'give', true);
                 }, 60e3);
             }
-            lastStates[devName] = {
-                className: className,
-                title: title
-            };
+            saveLastState(devName, className, title);
             var llamaButtons = document.querySelectorAll('span[devName="' + devName + '"]');
             forEach(llamaButtons, function(llamaButton) {
                 setButtonState(llamaButton, className, title);
@@ -224,6 +221,13 @@ addJS(function() {
             if (className === 'already')
                 storage('set', loggedInDev + '|' + devName, 0);
         };
+        var saveLastState = function(devName, className, title) {
+            if (className === 'unknown') return;
+            lastStates[devName] = {
+                className: className,
+                title: title
+            };
+        };
         var llamaButtonsToUpdate = {};
         var askServerForStatus = function(llamaButton, devName) {
             if (llamaButtonsToUpdate.hasOwnProperty(devName)) {
@@ -231,13 +235,8 @@ addJS(function() {
             } else {
                 llamaButtonsToUpdate[devName] = [llamaButton];
                 getGiveMenu(devName, function(devID, className, title) {
-                    if (className !== 'unknown') {
-                        lastStates[devName] = {
-                            className: className,
-                            title: title
-                        };
-                        saveData(devName, devID, className);
-                    }
+                    saveLastState(devName, className, title);
+                    saveData(devName, devID, className);
                     forEach(llamaButtonsToUpdate[devName], function(button) {
                         setButtonState(button, className, title);
                     });
