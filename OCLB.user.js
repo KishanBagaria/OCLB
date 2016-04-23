@@ -409,6 +409,7 @@ addJS(function() {
                 addMessageListener(function(data) {
                     if (data.loggedInDev) {
                         loggedInDev = data.loggedInDev;
+                        window.postMessage('oclb.loggedInDev|' + loggedInDev, window.location.href);
                         forEach(document.querySelectorAll('span.oclb'), function(button) {
                             var devName = button.getAttribute('devName');
                             if (devName) initLlamaButton(button, devName, iframe);
