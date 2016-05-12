@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.0
+// @version         4.1
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
 // @grant           GM_getValue
@@ -273,9 +273,14 @@ addJS(function() {
             if (devName === loggedInDev) return;
             var llamaButton = document.createElement('span');
             llamaButton.setAttribute('devName', devName);
-            var el = setting('showPos') === 'after' ? devNameLink.nextSibling : devNameLink;
             initLlamaButton(llamaButton, devName);
-            devNameLink.parentNode.insertBefore(llamaButton, el);
+            var refEl = setting('showPos') === 'before' ? devNameLink : devNameLink.nextSibling;
+            if (setting('showPos') === 'after') {
+                if (refEl.className && refEl.className.includes('user-symbol')) {
+                    refEl = refEl.nextSibling;
+                }
+            }
+            devNameLink.parentNode.insertBefore(llamaButton, refEl);
         };
         var init = function() {
             addCSS(CSS);
@@ -347,6 +352,9 @@ addJS(function() {
                 if (devNameLink) addLlamaButton(devNameLink);
                 return devNameLink;
             };
+            var isNotifyCenter = function() {
+                return window.location.href.includes('/notifications/');
+            };
             var showIn = setting('showIn');
             if (showIn === '*') {
                 if (window.location.href.endsWith('/badges/')) {
@@ -358,8 +366,11 @@ addJS(function() {
             } else if (showIn === 'profile') {
                 if (!addInCatBar()) return;
             } else if (showIn === 'notifycenter') {
-                if (!window.location.href.includes('/notifications/')) return;
+                if (!isNotifyCenter) return;
                 addEverywhere();
+            } else if (showIn === 'notifycenter+profile') {
+                if (isNotifyCenter) addEverywhere();
+                else if (!addInCatBar()) return;
             }
             if (showIn !== 'profile') window.addEventListener('storage', storageListener);
             init();
@@ -381,7 +392,7 @@ addJS(function() {
         };
         var addMessageListener = function(callback) {
             window.addEventListener('message', function(e) {
-                if (e.data.slice(0, 6) !== '{\"oclb') return;
+                if (e.data && e.data.slice(0, 6) !== '{\"oclb') return;
                 callback(JSON.parse(e.data).oclb, e.origin);
             });
         };
@@ -478,8 +489,8 @@ addJS(function() {
             }
         }
     } catch (err) {
-        var heading = 'One Click Llama Button encountered an error:\n';
+        var heading = 'One Click Llama Button v4.1 encountered an error:\n';
         console.error(heading, err);
-        alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or send it in a note to Kishan-Bagaria.DeviantArt.com');
+        alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or send it in a note to Kishan-Bagaria.DeviantArt.com\n\n---\n' + navigator.userAgent);
     }
 });
