@@ -392,7 +392,7 @@ addJS(function() {
             addFooterLinks();
         };
         var addFooterLinks = function() {
-            var footer = document.getElementsByClassName('footer_tx_links')[0];
+            var footer = document.querySelector('footer_tx_links');
             if (footer) {
                 var LINKS = {
                     'One Click Llama Button': '//kishanbagaria.com/userscripts/one-click-llama-button/'
