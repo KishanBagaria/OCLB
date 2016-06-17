@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.2.2
+// @version         4.2.3
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
 // @grant           GM_getValue
@@ -407,7 +407,7 @@ addJS(function() {
         };
         var addMessageListener = function(callback) {
             window.addEventListener('message', function(e) {
-                if (e.data && e.data.slice(0, 6) !== '{\"oclb') return;
+                if (e.data && e.data.slice && e.data.slice(0, 6) !== '{\"oclb') return;
                 callback(JSON.parse(e.data).oclb, e.origin);
             });
         };
@@ -466,17 +466,20 @@ addJS(function() {
                 }
             } else if (window.location.href.includes('/modal/badge/process_trade')) {
                 if (document.getElementsByClassName('badge-llama').length > 0) {
-                    var successElement = document.querySelector('#badgeReceiptBody > div'),
+                    var usernameElement = document.querySelector('username'),
+                        successElement = document.querySelector('#badgeReceiptBody > div'),
                         errorElement = document.querySelector('#error_messages > ul > li'),
                         successText = successElement ? successElement.textContent.replace(/\s+/g, ' ').trim() : '',
                         errorText = errorElement ? errorElement.textContent.replace(/\s+/g, ' ').trim() : '';
-                    window.parent.postMessage(JSON.stringify({
-                        oclb: {
-                            devName: document.getElementsByClassName('username')[0].textContent.toLowerCase(),
-                            successText: successText,
-                            errorText: errorText
-                        }
-                    }), '*');
+                    if (usernameElement) {
+                        window.parent.postMessage(JSON.stringify({
+                            oclb: {
+                                devName: usernameElement.textContent.toLowerCase(),
+                                successText: successText,
+                                errorText: errorText
+                            }
+                        }), '*');
+                    }
                 }
             } else if (window.location.href.includes('://deviantart.com/global/difi/?oclb')) {
                 document.cookie.split(';').forEach(function(c) {
