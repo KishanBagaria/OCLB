@@ -134,6 +134,7 @@ addJS(function() {
             document.head.appendChild(document.createElement('style')).textContent = css;
         };
         var storage = function(action, key, value) {
+            if (typeof window.localStorage !== 'object') return;
             try {
                 return window.localStorage[action + 'Item'](key, value);
             } catch (er) {
@@ -393,7 +394,7 @@ addJS(function() {
             addFooterLinks();
         };
         var addFooterLinks = function() {
-            var footer = document.querySelector('footer_tx_links');
+            var footer = document.querySelector('.footer_tx_links');
             if (footer) {
                 var LINKS = {
                     'One Click Llama Button': '//kishanbagaria.com/userscripts/one-click-llama-button/'
