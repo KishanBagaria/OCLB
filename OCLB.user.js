@@ -4,7 +4,7 @@
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
 // @license         MIT License (https://opensource.org/licenses/MIT)
-// @version         4.2.4
+// @version         4.2.5
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -135,6 +135,7 @@ addJS(function() {
             document.head.appendChild(document.createElement('style')).textContent = css;
         };
         var storage = function(action, key, value) {
+            if (typeof window.localStorage !== 'object') return;
             try {
                 return window.localStorage[action + 'Item'](key, value);
             } catch (er) {
@@ -394,7 +395,7 @@ addJS(function() {
             addFooterLinks();
         };
         var addFooterLinks = function() {
-            var footer = document.querySelector('footer_tx_links');
+            var footer = document.querySelector('.footer_tx_links');
             if (footer) {
                 var LINKS = {
                     'One Click Llama Button': '//kishanbagaria.com/userscripts/one-click-llama-button/'
@@ -456,7 +457,7 @@ addJS(function() {
             if (window.location.href.includes('/modal/badge/give?badgetype=llama')) {
                 var fillForm = function() {
                     if (!document.give_form)
-                        throw 'Invalid response from DeviantArt server.';
+                        window.location.reload();
                     document.give_form.tos.checked = true;
                     document.give_form.password_remembered.checked = true;
                     document.give_form.submit();
