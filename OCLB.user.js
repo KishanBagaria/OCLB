@@ -2,8 +2,7 @@
 // @name            One Click Llama Button
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
-// @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @license         MIT License (https://opensource.org/licenses/MIT)
+// @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com | MIT License (https://opensource.org/licenses/MIT)
 // @version         4.2.5
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
