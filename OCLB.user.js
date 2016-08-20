@@ -515,7 +515,7 @@ addJS(function() {
             }
         }
     } catch (err) {
-        var heading = 'One Click Llama Button v4.2 encountered an error:\n';
+        var heading = 'One Click Llama Button v4.2.7 encountered an error:\n';
         console.error(heading, err);
         alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or send it in a note to Kishan-Bagaria.DeviantArt.com\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
     }
