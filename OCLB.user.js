@@ -139,7 +139,7 @@ addJS(function() {
                 return window.localStorage[action + 'Item'](key, value);
             } catch (er) {
                 // This code is terrible, but this saves me from helping
-                // to FF users having LS trouble (probably a bug in FF).
+                // FF users having LS trouble (probably a bug in FF).
                 window.localStorage.clear();
             }
         };
@@ -516,7 +516,7 @@ addJS(function() {
     } catch (err) {
         var heading = 'One Click Llama Button v4.2.10 encountered an error:\n';
         console.error(heading, err);
-        alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or send it in a note to Kishan-Bagaria.DeviantArt.com\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
+        alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted a comment about it).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
     }
 });
 
