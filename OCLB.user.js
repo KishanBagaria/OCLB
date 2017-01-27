@@ -11,10 +11,10 @@
 // @grant           GM_setValue
 // @grant           unsafeWindow
 // @run-at          document-end
-// @downloadURL     https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
-// @updateURL       https://gist.github.com/KishanBagaria/3c6e25d4320ede9e1a2d/raw/OCLB.user.js
+// @downloadURL     https://github.com/KishanBagaria/OCLB/raw/master/OCLB.user.js
+// @updateURL       https://github.com/KishanBagaria/OCLB/raw/master/OCLB.user.js
 // ==/UserScript==
-/*global GM_getValue, GM_setValue, unsafeWindow, gmGet, gmSet*/
+
 try {
     gmSet = GM_setValue;
     gmGet = GM_getValue;

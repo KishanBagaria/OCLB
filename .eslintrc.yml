@@ -1,0 +1,17 @@
+env:
+  browser: true
+extends: 'eslint:recommended'
+rules:
+  no-console:
+    - error
+    - allow:
+      - warn
+      - error
+  semi:
+    - error
+    - always
+globals:
+  GM_getValue: false
+  GM_setValue: false
+  gmGet: true
+  gmSet: true
