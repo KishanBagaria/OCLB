@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.2.10
+// @version         4.3
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -133,8 +133,19 @@ addJS(function() {
         var addCSS = function(css) {
             document.head.appendChild(document.createElement('style')).textContent = css;
         };
+        // taken from: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/storage/localstorage.js
+        var isLSSupported = (function() {
+            var mod = 'ls-supported';
+            try {
+                window.localStorage.setItem(mod, mod);
+                window.localStorage.removeItem(mod);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        })();
         var storage = function(action, key, value) {
-            if (typeof window.localStorage !== 'object') return;
+            if (!isLSSupported) return;
             try {
                 return window.localStorage[action + 'Item'](key, value);
             } catch (er) {
@@ -514,9 +525,9 @@ addJS(function() {
             }
         }
     } catch (err) {
-        var heading = 'One Click Llama Button v4.2.10 encountered an error:\n';
+        var heading = 'One Click Llama Button v4.3 encountered an error:\n';
         console.error(heading, err);
-        alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted a comment about it).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
+        alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted the same comment).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
     }
 });
 
