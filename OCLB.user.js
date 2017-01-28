@@ -11,8 +11,8 @@
 // @grant           GM_setValue
 // @grant           unsafeWindow
 // @run-at          document-end
-// @downloadURL     https://github.com/KishanBagaria/OCLB/raw/master/OCLB.user.js
-// @updateURL       https://github.com/KishanBagaria/OCLB/raw/master/OCLB.user.js
+// @downloadURL     https://raw.githubusercontent.com/KishanBagaria/OCLB/master/OCLB.user.js
+// @updateURL       https://raw.githubusercontent.com/KishanBagaria/OCLB/master/OCLB.user.js
 // ==/UserScript==
 
 try {
