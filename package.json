@@ -1,0 +1,15 @@
+{
+  "private": "true",
+  "scripts": {
+    "lint": "eslint .",
+    "build": "gulp"
+  },
+  "devDependencies": {
+    "babel-preset-latest": "^6.22.0",
+    "eslint": "^3.14.1",
+    "eslint-config-airbnb": "^14.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
+  }
+}

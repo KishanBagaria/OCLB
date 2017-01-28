@@ -1,15 +1,26 @@
 env:
   browser: true
-extends: 'eslint:recommended'
+extends: 'airbnb/base'
 rules:
   no-console:
     - error
     - allow:
       - warn
       - error
-  semi:
-    - error
-    - always
+  comma-dangle: [error, never]
+  consistent-return: off
+  func-names: off
+  no-alert: off
+  no-bitwise: off
+  no-extend-native: off
+  no-param-reassign: off
+  no-plusplus: off
+  no-var: off
+  object-shorthand: off
+  one-var: off
+  prefer-arrow-callback: off
+  prefer-template: off
+  vars-on-top: off
 globals:
   GM_getValue: false
   GM_setValue: false
