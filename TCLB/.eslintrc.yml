@@ -1,0 +1,10 @@
+extends: 'airbnb/base'
+rules:
+  comma-dangle: [error, never]
+  func-names: off
+  no-alert: off
+  no-bitwise: off
+  no-extend-native: off
+  no-param-reassign: off
+  no-plusplus: off
+globals: []

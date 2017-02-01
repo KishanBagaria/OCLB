@@ -34,25 +34,25 @@ span.tclb-error  {background:url(${IMG.ERROR})  center no-repeat;cursor:pointer}
 span.tclb-unknown{background:url(${IMG.UNKNOWN})center no-repeat;cursor:help}
 span.tclb-enough {background:url(${IMG.ENOUGH}) center no-repeat}
 span.tclb-100k {width:26px}
-span.tclb-100k:after{color:#f6e16e;background:#4A270D;content:"100k";font:10px/17px Trebuchet MS;letter-spacing:0;vertical-align:top;border-radius:4px;padding:0 3px;display:inline-block}`,
-  RETINA_STYLE = 'span.tclb{background-size:auto 18px} span.tclb-already{background-size:auto 8px}',
-  UNKNOWN_TITLE = 'This deviant\'s Llama status is a mystery!',
-  TITLES = {
-    give: 'Give a Llama',
-    giving: 'Giving Llama...',
-    already: 'Already gave a Llama',
-    enough: 'Has Llamas enough for love',
-    unknown: {
-      loading: `${UNKNOWN_TITLE} (Loading...)`,
-      err_network: `${UNKNOWN_TITLE} (Network error)`,
-      err_dev_id: `${UNKNOWN_TITLE} (Invalid response, unable to find deviant ID)`,
-      err_server_response: `${UNKNOWN_TITLE} (Invalid response, unable to find llama status)`
-    }
-  },
-  HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91'];
-const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase(),
-  lastStates = {},
-  devIDs = {};
+span.tclb-100k:after{color:#f6e16e;background:#4A270D;content:"100k";font:10px/17px Trebuchet MS;letter-spacing:0;vertical-align:top;border-radius:4px;padding:0 3px;display:inline-block}`;
+const RETINA_STYLE = 'span.tclb{background-size:auto 18px} span.tclb-already{background-size:auto 8px}';
+const UNKNOWN_TITLE = 'This deviant\'s Llama status is a mystery!';
+const TITLES = {
+  give: 'Give a Llama',
+  giving: 'Giving Llama...',
+  already: 'Already gave a Llama',
+  enough: 'Has Llamas enough for love',
+  unknown: {
+    loading: `${UNKNOWN_TITLE} (Loading...)`,
+    err_network: `${UNKNOWN_TITLE} (Network error)`,
+    err_dev_id: `${UNKNOWN_TITLE} (Invalid response, unable to find deviant ID)`,
+    err_server_response: `${UNKNOWN_TITLE} (Invalid response, unable to find llama status)`
+  }
+};
+const HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91'];
+const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
+const lastStates = {};
+const devIDs = {};
 try {
   if (!String.prototype.includes) {
     String.prototype.includes = function (search, start) {

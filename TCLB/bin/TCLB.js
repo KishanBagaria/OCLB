@@ -26,10 +26,10 @@ var IMG_2X = {
 };
 var IMG = window.devicePixelRatio > 1 ? IMG_2X : IMG_1X;
 
-var STYLE = '#modalspace .modal div.loading{position:absolute;top:50%;left:50%;margin-top:-10px;margin-left:-37px}div.iframe-container{width:450px;height:485px}iframe.modal-iframe{position:relative;width:450px;height:485px;z-index:100;border:0;display:none}@media only screen and (max-device-width:480px){div#modalspace{position:fixed;min-width:100%;min-height:100%;overflow:auto}div.loading{width:auto;text-align:center}div.iframe-container{width:auto;height:485px}iframe.modal-iframe{position:relative;max-width:100%;height:485px;z-index:100;border:0;display:none}}\nspan.tclb        {display:inline-block;pointer-events:all;width:18px;height:18px;vertical-align:middle;margin:0 3px;cursor:default;transition:.3s all}\nspan.tclb-give   {background:url(' + IMG.GIVE + ')   center no-repeat;cursor:pointer}\nspan.tclb-already{background:url(' + IMG.ALREADY + ')center no-repeat;margin:0}\nspan.tclb-giving {background:url(' + IMG.GIVING + ') center no-repeat;cursor:progress}\nspan.tclb-success{background:url(' + IMG.SUCCESS + ')center no-repeat;width:26px}\nspan.tclb-error  {background:url(' + IMG.ERROR + ')  center no-repeat;cursor:pointer}\nspan.tclb-unknown{background:url(' + IMG.UNKNOWN + ')center no-repeat;cursor:help}\nspan.tclb-enough {background:url(' + IMG.ENOUGH + ') center no-repeat}\nspan.tclb-100k {width:26px}\nspan.tclb-100k:after{color:#f6e16e;background:#4A270D;content:"100k";font:10px/17px Trebuchet MS;letter-spacing:0;vertical-align:top;border-radius:4px;padding:0 3px;display:inline-block}',
-    RETINA_STYLE = 'span.tclb{background-size:auto 18px} span.tclb-already{background-size:auto 8px}',
-    UNKNOWN_TITLE = 'This deviant\'s Llama status is a mystery!',
-    TITLES = {
+var STYLE = '#modalspace .modal div.loading{position:absolute;top:50%;left:50%;margin-top:-10px;margin-left:-37px}div.iframe-container{width:450px;height:485px}iframe.modal-iframe{position:relative;width:450px;height:485px;z-index:100;border:0;display:none}@media only screen and (max-device-width:480px){div#modalspace{position:fixed;min-width:100%;min-height:100%;overflow:auto}div.loading{width:auto;text-align:center}div.iframe-container{width:auto;height:485px}iframe.modal-iframe{position:relative;max-width:100%;height:485px;z-index:100;border:0;display:none}}\nspan.tclb        {display:inline-block;pointer-events:all;width:18px;height:18px;vertical-align:middle;margin:0 3px;cursor:default;transition:.3s all}\nspan.tclb-give   {background:url(' + IMG.GIVE + ')   center no-repeat;cursor:pointer}\nspan.tclb-already{background:url(' + IMG.ALREADY + ')center no-repeat;margin:0}\nspan.tclb-giving {background:url(' + IMG.GIVING + ') center no-repeat;cursor:progress}\nspan.tclb-success{background:url(' + IMG.SUCCESS + ')center no-repeat;width:26px}\nspan.tclb-error  {background:url(' + IMG.ERROR + ')  center no-repeat;cursor:pointer}\nspan.tclb-unknown{background:url(' + IMG.UNKNOWN + ')center no-repeat;cursor:help}\nspan.tclb-enough {background:url(' + IMG.ENOUGH + ') center no-repeat}\nspan.tclb-100k {width:26px}\nspan.tclb-100k:after{color:#f6e16e;background:#4A270D;content:"100k";font:10px/17px Trebuchet MS;letter-spacing:0;vertical-align:top;border-radius:4px;padding:0 3px;display:inline-block}';
+var RETINA_STYLE = 'span.tclb{background-size:auto 18px} span.tclb-already{background-size:auto 8px}';
+var UNKNOWN_TITLE = 'This deviant\'s Llama status is a mystery!';
+var TITLES = {
   give: 'Give a Llama',
   giving: 'Giving Llama...',
   already: 'Already gave a Llama',
@@ -40,11 +40,11 @@ var STYLE = '#modalspace .modal div.loading{position:absolute;top:50%;left:50%;m
     err_dev_id: UNKNOWN_TITLE + ' (Invalid response, unable to find deviant ID)',
     err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
   }
-},
-    HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91'];
-var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase(),
-    lastStates = {},
-    devIDs = {};
+};
+var HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91'];
+var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
+var lastStates = {};
+var devIDs = {};
 try {
   (function () {
     if (!String.prototype.includes) {
