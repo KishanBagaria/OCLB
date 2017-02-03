@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.3
+// @version         4.4
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -95,7 +95,8 @@ addJS(function () {
     devIDs = {},
     xhrCallbacks = {},
     memStorage = {},
-    xdCommunicator;
+    xdCommunicator,
+    tabFocused = true;
 
   try {
     // credit: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
@@ -171,6 +172,7 @@ addJS(function () {
       if (!isLSSupported) return;
       try {
         Object.assign(window.localStorage, memStorage);
+        memStorage = {};
       } catch (er) {
         // This code is terrible, but this saves me from helping
         // FF users having LS trouble (probably a bug in FF).
@@ -180,6 +182,7 @@ addJS(function () {
     var storage = function (action, key, value) {
       if (action === 'get') return memStorage[key];
       if (action === 'set') memStorage[key] = value;
+      if (!tabFocused) syncStorage();
     };
     var setting = function (key, value) {
       if (value) {
@@ -189,7 +192,14 @@ addJS(function () {
         return DEFAULTS[key];
       }
     };
-
+    var cacheGiven = function (devName) {
+      storage('set', loggedInDev + '|' + devName, 0);
+    };
+    var cacheButtonStates = function (data) {
+      var existing = JSON.parse(storage('get', 'sbsCall') || '[]') || [];
+      existing.push(data);
+      storage('set', 'sbsCall', JSON.stringify(existing));
+    };
     var setButtonState = function (llamaButton, className, title) {
       llamaButton.className = 'oclb oclb-' + className;
       if (!title) title = TITLES[className];
@@ -202,17 +212,17 @@ addJS(function () {
     var spamTimeouts = {};
     var setButtonsState = function (devName, className, title, dontTellOtherTabs) {
       if (!dontTellOtherTabs) {
-        storage('set', 'sbsCall', JSON.stringify({
+        cacheButtonStates({
           loggedInDev: loggedInDev,
           devName: devName,
           className: className,
           title: title
-        }));
+        });
       }
       if ({}.hasOwnProperty.call(spamTimeouts, devName)) clearTimeout(spamTimeouts[devName]);
       if (className === 'spam') {
         spamTimeouts[devName] = setTimeout(function () {
-          setButtonsState(devName, 'give', true);
+          setButtonsState(devName, 'give');
         }, 60e3);
       }
       saveLastState(devName, className, title);
@@ -295,7 +305,7 @@ addJS(function () {
         getGiveMenu(devName, function (devID, className, title) {
           saveLastState(devName, className, title);
           if (devID) devIDs[devName] = devID;
-          if (className === 'already') storage('set', loggedInDev + '|' + devName, 0);
+          if (className === 'already') cacheGiven(devName);
           llamaButtonsToUpdate[devName].forEach(function (button) {
             setButtonState(button, className, title);
           });
@@ -350,7 +360,7 @@ addJS(function () {
         clearTimeout(errorTimeouts[data.devName]);
         delete errorTimeouts[data.devName];
         var callback = function (className, setStorage) {
-          if (setStorage) storage('set', loggedInDev + '|' + data.devName, 0);
+          if (setStorage) cacheGiven(data.devName);
           setButtonsState(data.devName, className, className === 'success' ? data.successText : data.errorText);
         };
         if (data.successText.includes('Success!')) {
@@ -386,7 +396,13 @@ addJS(function () {
       }
     };
     var addLlamaButtonsInDA = function () {
-      window.addEventListener('blur', syncStorage);
+      window.addEventListener('blur', function () {
+        syncStorage();
+        tabFocused = false;
+      });
+      window.addEventListener('focus', function () {
+        tabFocused = true;
+      });
       var waitForElements = function (parentNode, selector, callback) {
         var callbackOnlyOnce = function (n) {
           if (n.getAttribute('data-oclb-found')) return;
@@ -410,10 +426,13 @@ addJS(function () {
       };
       var storageListener = function (e) {
         if (e.key !== 'sbsCall') return;
-        var data = JSON.parse(e.newValue);
-        if (data.loggedInDev === loggedInDev) {
-          setButtonsState(data.devName, data.className, data.title, true);
-        }
+        var arr = JSON.parse(e.newValue || '[]') || [];
+        arr.forEach(function (data) {
+          if (data.loggedInDev === loggedInDev) {
+            setButtonsState(data.devName, data.className, data.title, true);
+          }
+        });
+        storage.set('sbsCall', '[]');
       };
       var usernameLinkSelector = (setting('addForGroups') === 'true' ? 'a.username' : 'a.username:not(.group)');
       var addEverywhere = function () {
@@ -538,7 +557,7 @@ addJS(function () {
       if (loggedInDev) addLlamaButtonsInDA();
     }
   } catch (err) {
-    var heading = 'One Click Llama Button v4.3 encountered an error:\n';
+    var heading = 'One Click Llama Button v4.4 encountered an error:\n';
     console.error(heading, err);
     alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted the same comment).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
   }
