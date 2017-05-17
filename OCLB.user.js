@@ -345,18 +345,20 @@ addJS(function () {
       });
     };
     var addFooterLinks = function () {
-      var footer = document.querySelector('.footer_tx_links');
-      if (footer) {
-        var LINKS = {
-          'One Click Llama Button': '//kishanbagaria.com/userscripts/one-click-llama-button/'
-        };
-        Object.keys(LINKS).forEach(function (link) {
-          var a = document.createElement('a');
-          a.innerHTML = link;
-          a.href = LINKS[link];
-          footer.appendChild(a);
-        });
-      }
+      var footer = document.querySelector('.footer-menu-list');
+      if (!footer) return;
+      var LINKS = {
+        'One Click Llama Button': '//kishanbagaria.com/userscripts/one-click-llama-button/'
+      };
+      Object.keys(LINKS).forEach(function (link) {
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        li.className = 'footer-menu-list-item';
+        a.innerHTML = link;
+        a.href = LINKS[link];
+        li.appendChild(a);
+        footer.appendChild(li);
+      });
     };
     var addLlamaButtonsInDA = function () {
       var waitForElements = function (parentNode, selector, callback) {
