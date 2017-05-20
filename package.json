@@ -1,8 +1,17 @@
 {
+  "name": "OCLB",
   "private": "true",
+  "license": "MIT",
+  "repository": "KishanBagaria/OCLB",
+  "author": {
+    "name": "Kishan Bagaria",
+    "email": "hi@kishan.info",
+    "url": "kishanbagaria.com"
+  },
   "scripts": {
+    "build": "gulp",
     "lint": "eslint .",
-    "build": "gulp"
+    "test": "eslint ."
   },
   "devDependencies": {
     "babel-preset-latest": "^6.22.0",
