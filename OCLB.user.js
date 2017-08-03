@@ -81,7 +81,7 @@ addJS(function () {
         err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
       }
     },
-    HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91'],
+    HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91', 'thegalleryofeve'],
     DEFAULTS = {
       showIn: '*',
       showPos: 'after',
@@ -352,11 +352,8 @@ addJS(function () {
       };
       Object.keys(LINKS).forEach(function (link) {
         var li = document.createElement('li');
-        var a = document.createElement('a');
         li.className = 'footer-menu-list-item';
-        a.innerHTML = link;
-        a.href = LINKS[link];
-        li.appendChild(a);
+        li.innerHTML = link.link(LINKS[link]);
         footer.appendChild(li);
       });
     };

@@ -41,211 +41,207 @@ var TITLES = {
     err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
   }
 };
-var HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91'];
+var HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91', 'thegalleryofeve'];
 var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 var lastStates = {};
 var devIDs = {};
 try {
-  (function () {
-    if (!String.prototype.includes) {
-      String.prototype.includes = function (search, start) {
-        if (typeof start !== 'number') {
-          start = 0;
-        }
-        if (start + search.length > this.length) {
-          return false;
-        }
-        return this.indexOf(search, start) !== -1;
-      };
-    }
-    if (!Array.prototype.includes) {
-      Array.prototype.includes = function (search) {
-        return this.indexOf(search) !== -1;
-      };
-    }
-    var $forEach = function $forEach(array, callback) {
-      if (array && callback) {
-        for (var i = 0; i < array.length; i++) {
-          callback(array[i], i);
-        }
+  if (!String.prototype.includes) {
+    String.prototype.includes = function (search, start) {
+      if (typeof start !== 'number') {
+        start = 0;
       }
-    };
-    var addCSS = function addCSS(css) {
-      document.head.appendChild(document.createElement('style')).textContent = css;
-    };
-    var setButtonState = function setButtonState(llamaButton, className, title) {
-      llamaButton.className = 'tclb tclb-' + className;
-      if (!title) title = TITLES[className];
-      if (title) llamaButton.title = title;
-    };
-    var setButtonsState = function setButtonsState(devName, className, title) {
-      if (className !== 'unknown') {
-        lastStates[devName] = { className: className, title: title };
+      if (start + search.length > this.length) {
+        return false;
       }
-      var llamaButtons = document.querySelectorAll('span[devName="' + devName + '"]');
-      $forEach(llamaButtons, function (llamaButton) {
-        setButtonState(llamaButton, className, title);
-      });
+      return this.indexOf(search, start) !== -1;
     };
-    var lastDevName = void 0;
-    var pubSubCount = void 0;
-    var askedServer = void 0;
-    var getGiveMenu = function getGiveMenu(devName, _ref) {
-      var load = _ref.load,
-          error = _ref.error;
+  }
+  if (!Array.prototype.includes) {
+    Array.prototype.includes = function (search) {
+      return this.indexOf(search) !== -1;
+    };
+  }
+  var $forEach = function $forEach(array, callback) {
+    if (array && callback) {
+      for (var i = 0; i < array.length; i++) {
+        callback(array[i], i);
+      }
+    }
+  };
+  var addCSS = function addCSS(css) {
+    document.head.appendChild(document.createElement('style')).textContent = css;
+  };
+  var setButtonState = function setButtonState(llamaButton, className, title) {
+    llamaButton.className = 'tclb tclb-' + className;
+    if (!title) title = TITLES[className];
+    if (title) llamaButton.title = title;
+  };
+  var setButtonsState = function setButtonsState(devName, className, title) {
+    if (className !== 'unknown') {
+      lastStates[devName] = { className: className, title: title };
+    }
+    var llamaButtons = document.querySelectorAll('span[devName="' + devName + '"]');
+    $forEach(llamaButtons, function (llamaButton) {
+      setButtonState(llamaButton, className, title);
+    });
+  };
+  var lastDevName = void 0;
+  var pubSubCount = void 0;
+  var askedServer = void 0;
+  var getGiveMenu = function getGiveMenu(devName, _ref) {
+    var load = _ref.load,
+        error = _ref.error;
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', '/global/difi/?c[]="User","getGiveMenu",["' + devName + '"]&t=json&' + ~~(Date.now() / 1e4), true);
-      xhr.onload = load;
-      xhr.onerror = error;
-      xhr.send();
-    };
-    var askServerIfSuccess = function askServerIfSuccess(devName) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/global/difi/?c[]="User","getGiveMenu",["' + devName + '"]&t=json&' + ~~(Date.now() / 1e4), true);
+    xhr.onload = load;
+    xhr.onerror = error;
+    xhr.send();
+  };
+  var askServerIfSuccess = function askServerIfSuccess(devName) {
+    getGiveMenu(devName, {
+      load: function load() {
+        var success = this.response.includes('Already gave a Llama');
+        setButtonsState(devName, success ? 'success' : 'error');
+        if (success) {
+          localStorage[loggedInDev + '|' + devName] = 0;
+        }
+      },
+      error: function error() {
+        setButtonsState(devName, 'unknown', TITLES.unknown.err_network);
+      }
+    });
+  };
+  var closeModal = function closeModal() {
+    document.getElementById('modalspace').remove();
+    document.getElementById('modalfade').remove();
+    if (!askedServer) askServerIfSuccess(lastDevName);
+  };
+  var showModal = function showModal(devName, url) {
+    var html = '<div id="modalspace" style="display:block">\n<div class="modal-cel">\n<div class="modal-wrapper">\n<div class="loading modal modal-rounded with-shadow">\n<a id="closeModal" class="x"></a>\n<h2>Give a Llama Badge</h2>\n<div class="loading"><img src="//st.deviantart.net/emoticons/e/eager.gif">Loading&hellip;</div>\n<div class="iframe-container">\n  <iframe id="badges_iframe" class="modal-iframe" src="' + url + '" frameborder="0" scrolling="no" onload="$(this).show()"></iframe>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div id="modalfade" style="display:block"></div>';
+    lastDevName = devName;
+    pubSubCount = 0;
+    askedServer = false;
+    document.body.insertAdjacentHTML('beforeend', html);
+    document.getElementById('closeModal').onclick = closeModal;
+  };
+  var messageListener = function messageListener(e) {
+    if (e.data) {
+      var d = JSON.parse(e.data);
+      if (d.eventname === 'PubSubCrossFrame.loaded') {
+        if (++pubSubCount % 3 === 0) {
+          askedServer = !askServerIfSuccess(lastDevName);
+          document.getElementsByClassName('modal-wrapper')[0].onclick = closeModal;
+        }
+      } else if (d.command === 'close') {
+        closeModal();
+      }
+    }
+  };
+  var llamaButtonClicked = function llamaButtonClicked() {
+    if (!['give', 'error'].includes(this.className.substr(10))) {
+      return;
+    }
+    var devName = this.getAttribute('devName');
+    setButtonsState(devName, 'giving');
+    showModal(devName, 'https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=' + window.location.protocol + '//' + window.location.hostname + '&to_user=' + devIDs[devName]);
+  };
+  var llamaButtonsToUpdate = {};
+  var askServerForStatus = function askServerForStatus(llamaButton, devName) {
+    if ({}.hasOwnProperty.call(llamaButtonsToUpdate, devName)) {
+      llamaButtonsToUpdate[devName].push(llamaButton);
+    } else {
+      llamaButtonsToUpdate[devName] = [llamaButton];
+      var callback = function callback(devID, className, title) {
+        if (className !== 'unknown') {
+          lastStates[devName] = { className: className, title: title };
+          if (devID) devIDs[devName] = devID;
+        }
+        if (className === 'already') {
+          localStorage[loggedInDev + '|' + devName] = '0';
+        }
+        llamaButtonsToUpdate[devName].forEach(function (button) {
+          setButtonState(button, className, title);
+        });
+        delete llamaButtonsToUpdate[devName];
+      };
       getGiveMenu(devName, {
         load: function load() {
-          var success = this.response.includes('Already gave a Llama');
-          setButtonsState(devName, success ? 'success' : 'error');
-          if (success) {
-            localStorage[loggedInDev + '|' + devName] = 0;
+          var regexResult = /data-userid=\\"(\d+?)\\"/.exec(this.response);
+          if (!regexResult) {
+            callback(0, 'unknown', TITLES.unknown.err_dev_id);
+            return;
+          }
+          var devID = regexResult[1];
+          if (this.response.includes('Already gave a Llama')) {
+            callback(devID, 'already');
+          } else if (this.response.includes('Give a <span>Llama Badge')) {
+            callback(devID, 'give');
+          } else if (this.response.includes('Has Llamas enough for love')) {
+            callback(devID, 'enough');
+          } else {
+            callback(devID, 'unknown', TITLES.unknown.err_server_response);
           }
         },
         error: function error() {
-          setButtonsState(devName, 'unknown', TITLES.unknown.err_network);
+          callback(0, 'unknown', TITLES.unknown.err_network);
         }
       });
-    };
-    var closeModal = function closeModal() {
-      document.getElementById('modalspace').remove();
-      document.getElementById('modalfade').remove();
-      if (!askedServer) askServerIfSuccess(lastDevName);
-    };
-    var showModal = function showModal(devName, url) {
-      var html = '<div id="modalspace" style="display:block">\n<div class="modal-cel">\n<div class="modal-wrapper">\n<div class="loading modal modal-rounded with-shadow">\n<a id="closeModal" class="x"></a>\n<h2>Give a Llama Badge</h2>\n<div class="loading"><img src="//st.deviantart.net/emoticons/e/eager.gif">Loading&hellip;</div>\n<div class="iframe-container">\n  <iframe id="badges_iframe" class="modal-iframe" src="' + url + '" frameborder="0" scrolling="no" onload="$(this).show()"></iframe>\n</div>\n</div>\n</div>\n</div>\n</div>\n<div id="modalfade" style="display:block"></div>';
-      lastDevName = devName;
-      pubSubCount = 0;
-      askedServer = false;
-      document.body.insertAdjacentHTML('beforeend', html);
-      document.getElementById('closeModal').onclick = closeModal;
-    };
-    var messageListener = function messageListener(e) {
-      if (e.data) {
-        var d = JSON.parse(e.data);
-        if (d.eventname === 'PubSubCrossFrame.loaded') {
-          if (++pubSubCount % 3 === 0) {
-            askedServer = !askServerIfSuccess(lastDevName);
-            document.getElementsByClassName('modal-wrapper')[0].onclick = closeModal;
-          }
-        } else if (d.command === 'close') {
-          closeModal();
-        }
-      }
-    };
-    var llamaButtonClicked = function llamaButtonClicked() {
-      if (!['give', 'error'].includes(this.className.substr(10))) {
-        return;
-      }
-      var devName = this.getAttribute('devName');
-      setButtonsState(devName, 'giving');
-      showModal(devName, 'https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=' + window.location.protocol + '//' + window.location.hostname + '&to_user=' + devIDs[devName]);
-    };
-    var llamaButtonsToUpdate = {};
-    var askServerForStatus = function askServerForStatus(llamaButton, devName) {
-      if ({}.hasOwnProperty.call(llamaButtonsToUpdate, devName)) {
-        llamaButtonsToUpdate[devName].push(llamaButton);
-      } else {
-        (function () {
-          llamaButtonsToUpdate[devName] = [llamaButton];
-          var callback = function callback(devID, className, title) {
-            if (className !== 'unknown') {
-              lastStates[devName] = { className: className, title: title };
-              if (devID) devIDs[devName] = devID;
-            }
-            if (className === 'already') {
-              localStorage[loggedInDev + '|' + devName] = '0';
-            }
-            llamaButtonsToUpdate[devName].forEach(function (button) {
-              setButtonState(button, className, title);
-            });
-            delete llamaButtonsToUpdate[devName];
-          };
-          getGiveMenu(devName, {
-            load: function load() {
-              var regexResult = /data-userid=\\"(\d+?)\\"/.exec(this.response);
-              if (!regexResult) {
-                callback(0, 'unknown', TITLES.unknown.err_dev_id);
-                return;
-              }
-              var devID = regexResult[1];
-              if (this.response.includes('Already gave a Llama')) {
-                callback(devID, 'already');
-              } else if (this.response.includes('Give a <span>Llama Badge')) {
-                callback(devID, 'give');
-              } else if (this.response.includes('Has Llamas enough for love')) {
-                callback(devID, 'enough');
-              } else {
-                callback(devID, 'unknown', TITLES.unknown.err_server_response);
-              }
-            },
-            error: function error() {
-              callback(0, 'unknown', TITLES.unknown.err_network);
-            }
-          });
-        })();
-      }
-    };
-    var addLlamaButton = function addLlamaButton(devNameLink) {
-      if (devNameLink.className.includes('banned')) return;
-      var devName = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
-      if (!devName) return;
-      devName = devName[1].toLowerCase();
-      if (devName === loggedInDev) return;
-      var llamaButton = document.createElement('span');
-      llamaButton.setAttribute('devName', devName);
-      llamaButton.onclick = llamaButtonClicked;
-      if ({}.hasOwnProperty.call(lastStates, devName)) {
-        setButtonState(llamaButton, lastStates[devName].className, lastStates[devName].title);
-      } else if (HAS_100K_LLAMAS.includes(devName)) {
-        setButtonState(llamaButton, '100k');
-      } else if (localStorage[loggedInDev + '|' + devName]) {
-        setButtonState(llamaButton, 'already');
-      } else {
-        setButtonState(llamaButton, 'unknown', TITLES.unknown.loading);
-        askServerForStatus(llamaButton, devName);
-      }
-      // Remove .nextSibling to make buttons appear before username
-      devNameLink.parentNode.insertBefore(llamaButton, devNameLink.nextSibling);
-    };
-    var waitForElements = function waitForElements(selector, callback) {
-      var callbackOnlyOnce = function callbackOnlyOnce(n) {
-        if (n.getAttribute('data-oclb-found')) return;
-        callback(n);
-        n.setAttribute('data-oclb-found', '1');
-      };
-      var callForChildren = function callForChildren(node) {
-        if (node.matches && node.matches(selector)) callbackOnlyOnce(node);
-        if (!node.querySelectorAll) return;
-        $forEach(node.querySelectorAll(selector), callbackOnlyOnce);
-      };
-      callForChildren(document.body);
-      new MutationObserver(function (mutations) {
-        mutations.forEach(function (m) {
-          $forEach(m.addedNodes, callForChildren);
-        });
-      }).observe(document.body, { childList: true, subtree: true });
-    };
-    if (!window.location.host.includes('deviantart.com')) {
-      alert('Works only on DeviantArt. Does any other website have Llamas?');
-    } else if (window.location.host === 'llamatrade.deviantart.com') {
-      alert("Doesn't work on LlamaTrade.");
-    } else if (loggedInDev) {
-      addCSS(STYLE);
-      if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
-      waitForElements('a.u, a[href*=".deviantart.com/badges/"]', addLlamaButton);
-      window.addEventListener('message', messageListener);
-    } else {
-      alert('You must log in to DeviantArt first.');
     }
-  })();
+  };
+  var addLlamaButton = function addLlamaButton(devNameLink) {
+    if (devNameLink.className.includes('banned')) return;
+    var devName = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
+    if (!devName) return;
+    devName = devName[1].toLowerCase();
+    if (devName === loggedInDev) return;
+    var llamaButton = document.createElement('span');
+    llamaButton.setAttribute('devName', devName);
+    llamaButton.onclick = llamaButtonClicked;
+    if ({}.hasOwnProperty.call(lastStates, devName)) {
+      setButtonState(llamaButton, lastStates[devName].className, lastStates[devName].title);
+    } else if (HAS_100K_LLAMAS.includes(devName)) {
+      setButtonState(llamaButton, '100k');
+    } else if (localStorage[loggedInDev + '|' + devName]) {
+      setButtonState(llamaButton, 'already');
+    } else {
+      setButtonState(llamaButton, 'unknown', TITLES.unknown.loading);
+      askServerForStatus(llamaButton, devName);
+    }
+    // Remove .nextSibling to make buttons appear before username
+    devNameLink.parentNode.insertBefore(llamaButton, devNameLink.nextSibling);
+  };
+  var waitForElements = function waitForElements(selector, callback) {
+    var callbackOnlyOnce = function callbackOnlyOnce(n) {
+      if (n.getAttribute('data-oclb-found')) return;
+      callback(n);
+      n.setAttribute('data-oclb-found', '1');
+    };
+    var callForChildren = function callForChildren(node) {
+      if (node.matches && node.matches(selector)) callbackOnlyOnce(node);
+      if (!node.querySelectorAll) return;
+      $forEach(node.querySelectorAll(selector), callbackOnlyOnce);
+    };
+    callForChildren(document.body);
+    new MutationObserver(function (mutations) {
+      mutations.forEach(function (m) {
+        $forEach(m.addedNodes, callForChildren);
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  };
+  if (!window.location.host.includes('deviantart.com')) {
+    alert('Works only on DeviantArt. Does any other website have Llamas?');
+  } else if (window.location.host === 'llamatrade.deviantart.com') {
+    alert("Doesn't work on LlamaTrade.");
+  } else if (loggedInDev) {
+    addCSS(STYLE);
+    if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
+    waitForElements('a.u, a[href*=".deviantart.com/badges/"]', addLlamaButton);
+    window.addEventListener('message', messageListener);
+  } else {
+    alert('You must log in to DeviantArt first.');
+  }
 } catch (err) {
   var heading = 'Two Click Llama Button encountered an error:\n';
   console.error(heading, err);
