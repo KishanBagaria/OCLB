@@ -49,7 +49,7 @@ const TITLES = {
     err_server_response: `${UNKNOWN_TITLE} (Invalid response, unable to find llama status)`
   }
 };
-const HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91', 'thegalleryofeve'];
+const HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91', 'thegalleryofeve', 'treepencil'];
 const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 const lastStates = {};
 const devIDs = {};
