@@ -59,7 +59,7 @@ const HAS_100K_LLAMAS = [
   'thegalleryofeve',
   'timing2',
   'toby512',
-  'treepencil',
+  'eve-jennifer',
   'vibrant-snow'
 ];
 const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();

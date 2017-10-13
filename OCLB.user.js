@@ -91,7 +91,7 @@ addJS(function () {
       'thegalleryofeve',
       'timing2',
       'toby512',
-      'treepencil',
+      'eve-jennifer',
       'vibrant-snow'
     ],
     DEFAULTS = {
