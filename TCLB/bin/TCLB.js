@@ -41,7 +41,7 @@ var TITLES = {
     err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
   }
 };
-var HAS_100K_LLAMAS = ['aenea-jones', 'damaimikaz', 'luke-crowe', 'timing2', 'ioulaum', 'championx91', 'thegalleryofeve', 'eve-jennifer'];
+var HAS_100K_LLAMAS = ['aenea-jones', 'championx91', 'damaimikaz', 'ioulaum', 'kalmakamala', 'luke-crowe', 'thegalleryofeve', 'timing2', 'toby512', 'eve-jennifer', 'vibrant-snow'];
 var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 var lastStates = {};
 var devIDs = {};
