@@ -60,7 +60,8 @@ const HAS_100K_LLAMAS = [
   'timing2',
   'toby512',
   'eve-jennifer',
-  'vibrant-snow'
+  'vibrant-snow',
+  'metorou-de'
 ];
 const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 const lastStates = {};

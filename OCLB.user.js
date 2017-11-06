@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.3.3
+// @version         4.3.4
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -92,7 +92,8 @@ addJS(function () {
       'timing2',
       'toby512',
       'eve-jennifer',
-      'vibrant-snow'
+      'vibrant-snow',
+      'metorou-de'
     ],
     DEFAULTS = {
       showIn: '*',
