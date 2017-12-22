@@ -93,7 +93,8 @@ addJS(function () {
       'toby512',
       'eve-jennifer',
       'vibrant-snow',
-      'metorou-de'
+      'metorou-de',
+      'unibat'
     ],
     DEFAULTS = {
       showIn: '*',
