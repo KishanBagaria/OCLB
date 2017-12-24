@@ -62,7 +62,8 @@ const HAS_100K_LLAMAS = [
   'eve-jennifer',
   'vibrant-snow',
   'metorou-de',
-  'unibat'
+  'unibat',
+  'iamsorry87'
 ];
 const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 const lastStates = {};
