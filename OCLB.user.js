@@ -95,7 +95,8 @@ addJS(function () {
       'vibrant-snow',
       'metorou-de',
       'unibat',
-      'iamsorry87'
+      'iamsorry87',
+      'seviyummy'
     ],
     DEFAULTS = {
       showIn: '*',

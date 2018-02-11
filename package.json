@@ -15,9 +15,9 @@
   },
   "devDependencies": {
     "babel-preset-latest": "^6.22.0",
-    "eslint": "^3.14.1",
-    "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-plugin-import": "^2.2.0",
+    "eslint": "^4",
+    "eslint-config-airbnb-base": "^12",
+    "eslint-plugin-import": "^2",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2"
   }
