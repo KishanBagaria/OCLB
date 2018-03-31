@@ -96,7 +96,8 @@ addJS(function () {
       'metorou-de',
       'unibat',
       'iamsorry87',
-      'seviyummy'
+      'seviyummy',
+      'fizzypinkbubbles'
     ],
     DEFAULTS = {
       showIn: '*',
