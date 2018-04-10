@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.3.8
+// @version         4.3.9
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -20,7 +20,7 @@ try {
   gmGet = GM_getValue; // eslint-disable-line camelcase
 } catch (e) {
   console.error(e);
-    // continue
+  // continue
 }
 
 function addJS(source) {
@@ -93,6 +93,7 @@ addJS(function () {
       'toby512',
       'eve-jennifer',
       'vibrant-snow',
+      'vibrantsnow',
       'metorou-de',
       'unibat',
       'iamsorry87',
@@ -117,7 +118,7 @@ addJS(function () {
     if (!String.prototype.endsWith) {
       String.prototype.endsWith = function (searchString, position) {
         var subjectString = this.toString();
-        if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+        if (typeof position !== 'number' || !Number.isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
           position = subjectString.length;
         }
         position -= searchString.length;

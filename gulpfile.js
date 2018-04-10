@@ -6,8 +6,8 @@ const babel = require('gulp-babel');
 
 gulp.task('default', () => {
   gulp.src('TCLB/src/TCLB.js')
-        .pipe(babel({ presets: ['latest'] }))
-        .pipe(gulp.dest('TCLB/bin'));
+    .pipe(babel({ presets: ['latest'] }))
+    .pipe(gulp.dest('TCLB/bin'));
 });
 gulp.task('watch', () => {
   gulp.watch('TCLB/src/TCLB.js', { debounceDelay: 1200 }, ['default']).on('change', (event) => {

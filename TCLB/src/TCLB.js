@@ -61,6 +61,7 @@ const HAS_100K_LLAMAS = [
   'toby512',
   'eve-jennifer',
   'vibrant-snow',
+  'vibrantsnow',
   'metorou-de',
   'unibat',
   'iamsorry87',
@@ -173,9 +174,10 @@ try {
     if (!['give', 'error'].includes(this.className.substr(10))) { return; }
     const devName = this.getAttribute('devName');
     setButtonsState(devName, 'giving');
-    showModal(devName,
-            `https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=${window.location.protocol}//${window.location.hostname}&to_user=${devIDs[devName]}`,
-        );
+    showModal(
+      devName,
+      `https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=${window.location.protocol}//${window.location.hostname}&to_user=${devIDs[devName]}`,
+    );
   };
   const llamaButtonsToUpdate = {};
   const askServerForStatus = (llamaButton, devName) => {
@@ -237,7 +239,7 @@ try {
       setButtonState(llamaButton, 'unknown', TITLES.unknown.loading);
       askServerForStatus(llamaButton, devName);
     }
-        // Remove .nextSibling to make buttons appear before username
+    // Remove .nextSibling to make buttons appear before username
     devNameLink.parentNode.insertBefore(llamaButton, devNameLink.nextSibling);
   };
   const waitForElements = (selector, callback) => {

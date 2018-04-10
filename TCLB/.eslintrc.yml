@@ -7,4 +7,4 @@ rules:
   no-extend-native: off
   no-param-reassign: off
   no-plusplus: off
-globals: []
+globals: {}
