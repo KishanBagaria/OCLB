@@ -66,7 +66,8 @@ const HAS_100K_LLAMAS = [
   'unibat',
   'iamsorry87',
   'seviyummy',
-  'fizzypinkbubbles'
+  'fizzypinkbubbles',
+  'epicsaveroom'
 ];
 const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 const lastStates = {};
