@@ -223,9 +223,11 @@ try {
   };
   const addLlamaButton = (devNameLink) => {
     if (devNameLink.className.includes('banned')) return;
-    let devName = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
-    if (!devName) return;
-    devName = devName[1].toLowerCase();
+    const devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
+    const devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(devNameLink.href);
+    if (!devNameOld && !devNameNew) return;
+    let devName = devNameOld[1] === 'www' ? devNameNew[1] : devNameOld[1];
+    devName = devName.toLowerCase();
     if (devName === loggedInDev) return;
     const llamaButton = document.createElement('span');
     llamaButton.setAttribute('devName', devName);
