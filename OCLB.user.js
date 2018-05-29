@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.3.10
+// @version         4.4
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -312,9 +312,11 @@ addJS(function () {
     };
     var addLlamaButton = function (devNameLink) {
       if (devNameLink.className.includes('banned')) return;
-      var devName = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
-      if (!devName) return;
-      devName = devName[1].toLowerCase();
+      var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
+      var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(devNameLink.href);
+      if (!devNameOld && !devNameNew) return;
+      var devName = devNameOld[1] === 'www' ? devNameNew[1] : devNameOld[1];
+      devName = devName.toLowerCase();
       if (devName === loggedInDev) return;
       var llamaButton = document.createElement('span');
       llamaButton.setAttribute('devName', devName);
