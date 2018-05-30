@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.4
+// @version         4.4.1
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
@@ -310,13 +310,20 @@ addJS(function () {
         askServerForStatus(llamaButton, devName);
       }
     };
+    var getDevName = function (href) {
+      var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(href);
+      if (devNameOld && devNameOld[1] !== 'www') {
+        return devNameOld[1].toLowerCase();
+      }
+      var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(href);
+      if (devNameNew) {
+        return devNameNew[1].toLowerCase();
+      }
+    };
     var addLlamaButton = function (devNameLink) {
       if (devNameLink.className.includes('banned')) return;
-      var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(devNameLink.href);
-      var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(devNameLink.href);
-      if (!devNameOld && !devNameNew) return;
-      var devName = devNameOld[1] === 'www' ? devNameNew[1] : devNameOld[1];
-      devName = devName.toLowerCase();
+      var devName = getDevName(devNameLink.href);
+      if (!devName) return;
       if (devName === loggedInDev) return;
       var llamaButton = document.createElement('span');
       llamaButton.setAttribute('devName', devName);
@@ -530,7 +537,7 @@ addJS(function () {
       if (loggedInDev) addLlamaButtonsInDA();
     }
   } catch (err) {
-    var heading = 'One Click Llama Button v4.4 encountered an error:\n';
+    var heading = 'One Click Llama Button v4.4.1 encountered an error:\n';
     console.error(heading, err);
     alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted the same comment).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
   }
