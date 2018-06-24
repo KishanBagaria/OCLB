@@ -99,7 +99,8 @@ addJS(function () {
       'iamsorry87',
       'seviyummy',
       'fizzypinkbubbles',
-      'epicsaveroom'
+      'epicsaveroom',
+      'shintaurashura'
     ],
     DEFAULTS = {
       showIn: '*',

@@ -67,7 +67,8 @@ const HAS_100K_LLAMAS = [
   'iamsorry87',
   'seviyummy',
   'fizzypinkbubbles',
-  'epicsaveroom'
+  'epicsaveroom',
+  'shintaurashura'
 ];
 const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 const lastStates = {};
