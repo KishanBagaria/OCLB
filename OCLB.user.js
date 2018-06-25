@@ -100,7 +100,8 @@ addJS(function () {
       'seviyummy',
       'fizzypinkbubbles',
       'epicsaveroom',
-      'shintaurashura'
+      'shintaurashura',
+      'natures-studio'
     ],
     DEFAULTS = {
       showIn: '*',
