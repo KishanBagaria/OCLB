@@ -41,7 +41,7 @@ var TITLES = {
     err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
   }
 };
-var HAS_100K_LLAMAS = ['aenea-jones', 'championx91', 'damaimikaz', 'ioulaum', 'kalmakamala', 'luke-crowe', 'thegalleryofeve', 'timing2', 'toby512', 'eve-jennifer', 'vibrant-snow', 'vibrantsnow', 'metorou-de', 'unibat', 'iamsorry87', 'seviyummy', 'fizzypinkbubbles', 'epicsaveroom', 'shintaurashura'];
+var HAS_100K_LLAMAS = ['aenea-jones', 'championx91', 'damaimikaz', 'ioulaum', 'kalmakamala', 'luke-crowe', 'thegalleryofeve', 'timing2', 'toby512', 'eve-jennifer', 'vibrant-snow', 'vibrantsnow', 'metorou-de', 'unibat', 'iamsorry87', 'seviyummy', 'fizzypinkbubbles', 'epicsaveroom', 'shintaurashura', 'natures-studio'];
 var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 var lastStates = {};
 var devIDs = {};
@@ -240,10 +240,10 @@ try {
       });
     }).observe(document.body, { childList: true, subtree: true });
   };
-  if (!window.location.host.includes('deviantart.com')) {
+  if (!window.location.host.includes('deviantart.com') && !window.location.host.includes('sta.sh')) {
     alert('Works only on DeviantArt. Does any other website have Llamas?');
   } else if (window.location.host === 'llamatrade.deviantart.com') {
-    alert("Doesn't work on LlamaTrade.");
+    alert("It doesn't work on LlamaTrade.");
   } else if (loggedInDev) {
     addCSS(STYLE);
     if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
