@@ -3,9 +3,10 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.4.2
+// @version         4.4.3
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
+// @match           *://*.sta.sh/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
 // @grant           GM_getValue
 // @grant           GM_setValue
@@ -449,7 +450,7 @@ addJS(function () {
       addStylesAndMsgListener();
       addFooterLinks();
     };
-    if (!window.location.host.includes('deviantart.com')) {
+    if (!window.location.host.includes('deviantart.com') && !window.location.host.includes('sta.sh')) {
       window.postMessage('oclb-loaded', window.location.href);
       if (window.location.href.includes('/preferences/')) {
         var inputs = document.querySelectorAll('input.oclb');

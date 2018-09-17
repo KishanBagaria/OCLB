@@ -273,10 +273,10 @@ try {
       });
     }).observe(document.body, { childList: true, subtree: true });
   };
-  if (!window.location.host.includes('deviantart.com')) {
+  if (!window.location.host.includes('deviantart.com') && !window.location.host.includes('sta.sh')) {
     alert('Works only on DeviantArt. Does any other website have Llamas?');
   } else if (window.location.host === 'llamatrade.deviantart.com') {
-    alert("Doesn't work on LlamaTrade.");
+    alert("It doesn't work on LlamaTrade.");
   } else if (loggedInDev) {
     addCSS(STYLE);
     if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
