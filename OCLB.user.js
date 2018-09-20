@@ -100,6 +100,7 @@ addJS(function () {
       'iamsorry87',
       'seviyummy',
       'fizzypinkbubbles',
+      'finakiyomo',
       'epicsaveroom',
       'shintaurashura',
       'natures-studio'
