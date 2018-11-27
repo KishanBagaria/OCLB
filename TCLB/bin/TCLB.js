@@ -196,12 +196,14 @@ try {
       });
     }
   };
-  var getDevName = function getDevName(href) {
-    var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(href);
+  var getDevName = function getDevName(link) {
+    var eclipseUsername = link.getAttribute('data-username');
+    if (eclipseUsername) return eclipseUsername.toLowerCase();
+    var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(link.href);
     if (devNameOld && devNameOld[1] !== 'www') {
       return devNameOld[1].toLowerCase();
     }
-    var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(href);
+    var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(link.href);
     if (devNameNew) {
       return devNameNew[1].toLowerCase();
     }
@@ -209,7 +211,7 @@ try {
   };
   var addLlamaButton = function addLlamaButton(devNameLink) {
     if (devNameLink.className.includes('banned')) return;
-    var devName = devNameLink.getAttribute('data-username') || getDevName(devNameLink.href);
+    var devName = getDevName(devNameLink.href);
     if (!devName) return;
     if (devName === loggedInDev) return;
     var llamaButton = document.createElement('span');

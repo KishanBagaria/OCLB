@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.5
+// @version         4.5.1
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -235,7 +235,7 @@ addJS(function () {
       if (!$includes(['give', 'error', 'spam'], this.className.slice(10))) return; // 10 === 'oclb oclb-'.length
       var devName = this.getAttribute('devName');
       setButtonsState(devName, 'giving');
-      var iframe = insertInvisibleIframe('https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=http://sta.sh&to_user=' + devIDs[devName], 'oclb-frame-' + devName);
+      var iframe = insertInvisibleIframe('https://www.deviantart.com/modal/badge/give?badgetype=llama&referrer=https://www.deviantart.com&to_user=' + devIDs[devName], 'oclb-frame-' + devName);
       clearTimeout(errorTimeouts[devName]);
       errorTimeouts[devName] = setTimeout(function () {
         if (iframe) iframe.remove();
@@ -320,19 +320,21 @@ addJS(function () {
         askServerForStatus(llamaButton, devName);
       }
     };
-    var getDevName = function (href) {
-      var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(href);
+    var getDevName = function (link) {
+      var eclipseUsername = link.getAttribute('data-username');
+      if (eclipseUsername) return eclipseUsername.toLowerCase();
+      var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(link.href);
       if (devNameOld && devNameOld[1] !== 'www') {
         return devNameOld[1].toLowerCase();
       }
-      var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(href);
+      var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(link.href);
       if (devNameNew) {
         return devNameNew[1].toLowerCase();
       }
     };
     var addLlamaButton = function (devNameLink) {
       if (devNameLink.className.includes('banned')) return;
-      var devName = devNameLink.getAttribute('data-username') || getDevName(devNameLink.href);
+      var devName = getDevName(devNameLink);
       if (!devName) return;
       if (devName === loggedInDev) return;
       var llamaButton = document.createElement('span');
@@ -460,6 +462,9 @@ addJS(function () {
       addStylesAndMsgListener();
       addFooterLinks();
     };
+    var postParent = function (obj) {
+      window.parent.postMessage(JSON.stringify({ oclb: obj }), '*');
+    };
     if (!window.location.host.includes('deviantart.com') && !window.location.host.includes('sta.sh')) {
       window.postMessage('oclb-loaded', window.location.href);
       if (window.location.href.includes('/preferences/')) {
@@ -518,29 +523,23 @@ addJS(function () {
           successText = successElement ? successElement.textContent.replace(/\s+/g, ' ').trim() : '',
           errorText = errorElement ? errorElement.textContent.replace(/\s+/g, ' ').trim() : '';
         if (usernameElement) {
-          window.parent.postMessage(JSON.stringify({
-            oclb: {
-              devName: usernameElement.textContent.toLowerCase(),
-              successText: successText,
-              errorText: errorText
-            }
-          }), '*');
+          postParent({
+            devName: usernameElement.textContent.toLowerCase(),
+            successText: successText,
+            errorText: errorText
+          });
         }
       }
     } else if (window.location.href.includes('://deviantart.com/global/difi/?oclb')) {
       document.cookie.split(';').forEach(function (c) {
         if (c.split('=')[0].trim() === 'userinfo') {
           loggedInDev = JSON.parse(decodeURIComponent(c).split(';')[1]).username.toLowerCase();
-          window.parent.postMessage(JSON.stringify({
-            oclb: { loggedInDev: loggedInDev }
-          }), '*');
+          postParent({ loggedInDev: loggedInDev });
         }
       });
       addMessageListener(function (data) {
         var _ = function () {
-          window.parent.postMessage(JSON.stringify({
-            oclb: { id: data.id, data: this }
-          }), '*');
+          postParent({ id: data.id, data: this })
         };
         if (data.url) {
           get(data.url, { success: _, error: _ });
@@ -550,7 +549,7 @@ addJS(function () {
       if (loggedInDev) addLlamaButtonsInDA();
     }
   } catch (err) {
-    var heading = 'One Click Llama Button v4.5 encountered an error:\n';
+    var heading = 'One Click Llama Button v4.5.1 encountered an error:\n';
     console.error(heading, err);
     alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted the same comment).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
   }

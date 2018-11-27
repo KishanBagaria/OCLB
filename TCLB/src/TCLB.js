@@ -230,12 +230,14 @@ try {
       });
     }
   };
-  const getDevName = (href) => {
-    const devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(href);
+  const getDevName = (link) => {
+    const eclipseUsername = link.getAttribute('data-username');
+    if (eclipseUsername) return eclipseUsername.toLowerCase();
+    const devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(link.href);
     if (devNameOld && devNameOld[1] !== 'www') {
       return devNameOld[1].toLowerCase();
     }
-    const devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(href);
+    const devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(link.href);
     if (devNameNew) {
       return devNameNew[1].toLowerCase();
     }
@@ -243,7 +245,7 @@ try {
   };
   const addLlamaButton = (devNameLink) => {
     if (devNameLink.className.includes('banned')) return;
-    const devName = devNameLink.getAttribute('data-username') || getDevName(devNameLink.href);
+    const devName = getDevName(devNameLink.href);
     if (!devName) return;
     if (devName === loggedInDev) return;
     const llamaButton = document.createElement('span');
