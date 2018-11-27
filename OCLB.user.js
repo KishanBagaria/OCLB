@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.4.3
+// @version         4.5
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -112,8 +112,7 @@ addJS(function () {
       animation: 'true'
     };
 
-  var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase(),
-    errorTimeouts = {},
+  var errorTimeouts = {},
     lastStates = {},
     devIDs = {},
     xhrCallbacks = {},
@@ -185,6 +184,13 @@ addJS(function () {
         return DEFAULTS[key];
       }
     };
+
+    var getLoggedInDeviantName = function () {
+      if (window.deviantART) return window.deviantART.deviant.username.toLowerCase();
+      var eclipseElement = document.querySelector('header a[data-username]');
+      if (eclipseElement) return eclipseElement.getAttribute('data-username');
+    };
+    var loggedInDev = getLoggedInDeviantName();
 
     var setButtonState = function (llamaButton, className, title) {
       llamaButton.className = 'oclb oclb-' + className;
@@ -326,7 +332,7 @@ addJS(function () {
     };
     var addLlamaButton = function (devNameLink) {
       if (devNameLink.className.includes('banned')) return;
-      var devName = getDevName(devNameLink.href);
+      var devName = devNameLink.getAttribute('data-username') || getDevName(devNameLink.href);
       if (!devName) return;
       if (devName === loggedInDev) return;
       var llamaButton = document.createElement('span');
@@ -418,7 +424,10 @@ addJS(function () {
           setButtonsState(data.devName, data.className, data.title, true);
         }
       };
-      var usernameLinkSelector = (setting('addForGroups') === 'true' ? 'a.username' : 'a.username:not(.group)');
+      var usernameLinkSelector = (setting('addForGroups') === 'true'
+        ? 'a.username, a[data-username]'
+        : 'a.username:not(.group), a[data-username]:not([data-usertype=group])'
+      );
       var addEverywhere = function () {
         waitForElements(document.body, 'a[href*=".deviantart.com/badges/"], ' + usernameLinkSelector, addLlamaButton);
       };

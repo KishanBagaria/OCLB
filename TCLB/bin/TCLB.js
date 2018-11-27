@@ -42,7 +42,6 @@ var TITLES = {
   }
 };
 var HAS_100K_LLAMAS = ['aenea-jones', 'championx91', 'damaimikaz', 'ioulaum', 'kalmakamala', 'luke-crowe', 'thegalleryofeve', 'timing2', 'toby512', 'eve-jennifer', 'vibrant-snow', 'vibrantsnow', 'metorou-de', 'unibat', 'iamsorry87', 'seviyummy', 'fizzypinkbubbles', 'finakiyomo', 'epicsaveroom', 'shintaurashura', 'natures-studio'];
-var loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 var lastStates = {};
 var devIDs = {};
 try {
@@ -72,6 +71,13 @@ try {
   var addCSS = function addCSS(css) {
     document.head.appendChild(document.createElement('style')).textContent = css;
   };
+  var getLoggedInDeviantName = function getLoggedInDeviantName() {
+    if (window.deviantART) return window.deviantART.deviant.username.toLowerCase();
+    var eclipseElement = document.querySelector('header a[data-username]');
+    if (eclipseElement) return eclipseElement.getAttribute('data-username');
+    return null;
+  };
+  var loggedInDev = getLoggedInDeviantName();
   var setButtonState = function setButtonState(llamaButton, className, title) {
     llamaButton.className = 'tclb tclb-' + className;
     if (!title) title = TITLES[className];
@@ -203,7 +209,7 @@ try {
   };
   var addLlamaButton = function addLlamaButton(devNameLink) {
     if (devNameLink.className.includes('banned')) return;
-    var devName = getDevName(devNameLink.href);
+    var devName = devNameLink.getAttribute('data-username') || getDevName(devNameLink.href);
     if (!devName) return;
     if (devName === loggedInDev) return;
     var llamaButton = document.createElement('span');
@@ -247,7 +253,7 @@ try {
   } else if (loggedInDev) {
     addCSS(STYLE);
     if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
-    waitForElements('a.u, a[href*=".deviantart.com/badges/"]', addLlamaButton);
+    waitForElements('a.username, a[data-username], a[href*=".deviantart.com/badges/"]', addLlamaButton);
     window.addEventListener('message', messageListener);
   } else {
     alert('You must log in to DeviantArt first.');

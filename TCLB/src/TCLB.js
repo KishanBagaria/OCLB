@@ -72,7 +72,6 @@ const HAS_100K_LLAMAS = [
   'shintaurashura',
   'natures-studio'
 ];
-const loggedInDev = window.deviantART && window.deviantART.deviant.username.toLowerCase();
 const lastStates = {};
 const devIDs = {};
 try {
@@ -98,6 +97,13 @@ try {
   const addCSS = (css) => {
     document.head.appendChild(document.createElement('style')).textContent = css;
   };
+  const getLoggedInDeviantName = () => {
+    if (window.deviantART) return window.deviantART.deviant.username.toLowerCase();
+    const eclipseElement = document.querySelector('header a[data-username]');
+    if (eclipseElement) return eclipseElement.getAttribute('data-username');
+    return null;
+  };
+  const loggedInDev = getLoggedInDeviantName();
   const setButtonState = (llamaButton, className, title) => {
     llamaButton.className = `tclb tclb-${className}`;
     if (!title) title = TITLES[className];
@@ -237,7 +243,7 @@ try {
   };
   const addLlamaButton = (devNameLink) => {
     if (devNameLink.className.includes('banned')) return;
-    const devName = getDevName(devNameLink.href);
+    const devName = devNameLink.getAttribute('data-username') || getDevName(devNameLink.href);
     if (!devName) return;
     if (devName === loggedInDev) return;
     const llamaButton = document.createElement('span');
@@ -281,7 +287,7 @@ try {
   } else if (loggedInDev) {
     addCSS(STYLE);
     if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
-    waitForElements('a.u, a[href*=".deviantart.com/badges/"]', addLlamaButton);
+    waitForElements('a.username, a[data-username], a[href*=".deviantart.com/badges/"]', addLlamaButton);
     window.addEventListener('message', messageListener);
   } else {
     alert('You must log in to DeviantArt first.');
