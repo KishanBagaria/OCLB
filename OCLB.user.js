@@ -539,7 +539,7 @@ addJS(function () {
       });
       addMessageListener(function (data) {
         var _ = function () {
-          postParent({ id: data.id, data: this })
+          postParent({ id: data.id, data: this });
         };
         if (data.url) {
           get(data.url, { success: _, error: _ });
