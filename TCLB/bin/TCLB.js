@@ -214,7 +214,7 @@ try {
   };
   var addLlamaButton = function addLlamaButton(devNameLink) {
     if (devNameLink.className.includes('banned')) return;
-    var devName = getDevName(devNameLink.href);
+    var devName = getDevName(devNameLink);
     if (!devName) return;
     if (devName === loggedInDev) return;
     var llamaButton = document.createElement('span');
