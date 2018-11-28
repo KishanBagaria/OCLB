@@ -266,5 +266,5 @@ try {
 } catch (err) {
   var heading = 'Two Click Llama Button encountered an error:\n';
   console.error(heading, err);
-  alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or\npost it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted a comment about it).');
+  alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or\npost it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted a comment about it).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent + '\n');
 }

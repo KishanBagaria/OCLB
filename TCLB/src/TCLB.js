@@ -306,5 +306,10 @@ ${err}
 ---
 
 Please email a screenshot of this to hi@kishan.info, or
-post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted a comment about it).`);
+post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted a comment about it).
+
+---
+URL: ${window.location.href}
+User-Agent: ${navigator.userAgent}
+`);
 }
