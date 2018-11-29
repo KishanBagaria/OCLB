@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.5.3
+// @version         4.5.4
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -187,7 +187,8 @@ addJS(function () {
 
     var getLoggedInDeviantName = function () {
       if (window.deviantART && window.deviantART.deviant) {
-        return window.deviantART.deviant.username.toLowerCase();
+        var u = window.deviantART.deviant.username;
+        if (u) return u.toLowerCase();
       }
       var eclipseElement = document.querySelector('header a[data-username]');
       if (eclipseElement) {
@@ -554,7 +555,7 @@ addJS(function () {
       if (loggedInDev) addLlamaButtonsInDA();
     }
   } catch (err) {
-    var heading = 'One Click Llama Button v4.5.3 encountered an error:\n';
+    var heading = 'One Click Llama Button v4.5.4 encountered an error:\n';
     console.error(heading, err);
     alert(heading + '\n---\n' + err + '\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on Kishan-Bagaria.DeviantArt.com (unless someone has already posted the same comment).\n\n---\nURL: ' + window.location.href + '\nUser-Agent: ' + navigator.userAgent);
   }

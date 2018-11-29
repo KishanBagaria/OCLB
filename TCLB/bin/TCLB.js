@@ -72,7 +72,10 @@ try {
     document.head.appendChild(document.createElement('style')).textContent = css;
   };
   var getLoggedInDeviantName = function getLoggedInDeviantName() {
-    if (window.deviantART) return window.deviantART.deviant.username.toLowerCase();
+    if (window.deviantART && window.deviantART.deviant) {
+      var u = window.deviantART.deviant.username;
+      if (u) return u.toLowerCase();
+    }
     var eclipseElement = document.querySelector('header a[data-username]');
     if (eclipseElement) {
       var username = eclipseElement.getAttribute('data-username');

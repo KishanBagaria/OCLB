@@ -98,7 +98,10 @@ try {
     document.head.appendChild(document.createElement('style')).textContent = css;
   };
   const getLoggedInDeviantName = () => {
-    if (window.deviantART) return window.deviantART.deviant.username.toLowerCase();
+    if (window.deviantART && window.deviantART.deviant) {
+      const u = window.deviantART.deviant.username;
+      if (u) return u.toLowerCase();
+    }
     const eclipseElement = document.querySelector('header a[data-username]');
     if (eclipseElement) {
       const username = eclipseElement.getAttribute('data-username');
