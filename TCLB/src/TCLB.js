@@ -295,7 +295,7 @@ try {
   } else if (loggedInDev) {
     addCSS(STYLE);
     if (window.devicePixelRatio > 1) addCSS(RETINA_STYLE);
-    waitForElements('a.username, a[data-username], a[href*=".deviantart.com/badges/"]', addLlamaButton);
+    waitForElements('a.username, a[data-username], a[href*=".deviantart.com/"][href*="/badges/"]', addLlamaButton);
     window.addEventListener('message', messageListener);
   } else {
     alert('You must log in to DeviantArt first.');
