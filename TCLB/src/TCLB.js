@@ -70,7 +70,8 @@ const HAS_100K_LLAMAS = [
   'finakiyomo',
   'epicsaveroom',
   'shintaurashura',
-  'natures-studio'
+  'natures-studio',
+  'darksena'
 ];
 const lastStates = {};
 const devIDs = {};
