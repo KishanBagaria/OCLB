@@ -68,6 +68,7 @@ const HAS_100K_LLAMAS = [
   'seviyummy',
   'fizzypinkbubbles',
   'finakiyomo',
+  'internetwaifu',
   'epicsaveroom',
   'shintaurashura',
   'natures-studio',
