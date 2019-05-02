@@ -41,7 +41,7 @@ var TITLES = {
     err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
   }
 };
-var HAS_100K_LLAMAS = ['aenea-jones', 'championx91', 'damaimikaz', 'ioulaum', 'kalmakamala', 'luke-crowe', 'thegalleryofeve', 'timing2', 'toby512', 'eve-jennifer', 'vibrant-snow', 'vibrantsnow', 'metorou-de', 'unibat', 'iamsorry87', 'seviyummy', 'fizzypinkbubbles', 'finakiyomo', 'epicsaveroom', 'shintaurashura', 'natures-studio', 'darksena'];
+var HAS_100K_LLAMAS = ['aenea-jones', 'championx91', 'damaimikaz', 'ioulaum', 'kalmakamala', 'luke-crowe', 'thegalleryofeve', 'timing2', 'toby512', 'eve-jennifer', 'vibrant-snow', 'vibrantsnow', 'metorou-de', 'unibat', 'iamsorry87', 'seviyummy', 'fizzypinkbubbles', 'finakiyomo', 'epicsaveroom', 'shintaurashura', 'natures-studio', 'darksena', 'novakaru'];
 var lastStates = {};
 var devIDs = {};
 try {

@@ -105,7 +105,8 @@ addJS(function () {
       'epicsaveroom',
       'shintaurashura',
       'natures-studio',
-      'darksena'
+      'darksena',
+      'novakaru'
     ],
     DEFAULTS = {
       showIn: '*',
