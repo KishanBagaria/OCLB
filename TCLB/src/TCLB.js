@@ -73,7 +73,10 @@ const HAS_100K_LLAMAS = [
   'shintaurashura',
   'natures-studio',
   'darksena',
-  'novakaru'
+  'novakaru',
+  'anpcreations',
+  'derfeldwebel',
+  'chateaugrief'
 ];
 const lastStates = {};
 const devIDs = {};
