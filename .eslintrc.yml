@@ -7,7 +7,6 @@ rules:
     - allow:
       - warn
       - error
-  comma-dangle: [error, never]
   consistent-return: off
   func-names: off
   no-alert: off

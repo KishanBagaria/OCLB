@@ -1,6 +1,5 @@
 extends: 'airbnb-base'
 rules:
-  comma-dangle: [error, never]
   func-names: off
   no-alert: off
   no-bitwise: off
