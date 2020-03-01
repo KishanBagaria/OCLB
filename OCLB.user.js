@@ -101,6 +101,7 @@ addJS(function () {
       'internetwaifu',
       'ioulaum',
       'kalmakamala',
+      'leonorachris',
       'lombarsi',
       'luke-crowe',
       'metorou-de',

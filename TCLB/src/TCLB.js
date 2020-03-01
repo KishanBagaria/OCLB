@@ -67,6 +67,7 @@ const HAS_100K_LLAMAS = [
   'internetwaifu',
   'ioulaum',
   'kalmakamala',
+  'leonorachris',
   'lombarsi',
   'luke-crowe',
   'metorou-de',
