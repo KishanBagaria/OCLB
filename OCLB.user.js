@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.5.6
+// @version         4.5.7
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -30,7 +30,7 @@ function addJS(source) {
   document.body.appendChild(s).remove();
 }
 addJS(function () {
-  var VERSION = '4.5.6',
+  var VERSION = '4.5.7',
     IMG_1X = {
       ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
       SPAM: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAVCAMAAACE9bUqAAAAe1BMVEUAMmb0zTM4DRCcX0HOt4ifSyxmAADMmWZlOCSojjDMiGGPPSFlAADVs5vElXfUp6oAAC5KR0NPNTyeSi6fgHYgH0+dX0Cbg4AAMWaZZmara2a4dG4/QFLHik9jCQ13Tkw6KUUAADMILVRLEhbMj22KSSgsDg0tR2YAKmIz6elIAAAAj0lEQVR4AX3LBRrDMAxDYSdlGDMz3P+Es6tF4/1lva+S/SL/OeeaS+y014JFOKJIgE9cOAhfXB3GafPLR4HuKI7jdqkStdnuBPa9WB0RBonpo1xihZ1QXgMMURAiM45gci8rfAaz+WIppqZ1bdJUbwz4JpQWUAWh5MHB+xMLdk9nb7TkgBU6SsuVO2eU7JcbjM8Lv+nDU0gAAAAASUVORK5CYII=',
@@ -526,7 +526,7 @@ addJS(function () {
       }
     } else if (window.location.href.includes('/modal/badge/give?badgetype=llama')) {
       var fillForm = function () {
-        if (!document.give_form) window.location.reload();
+        if (!document.give_form) return window.location.reload();
         if (document.give_form.tos) document.give_form.tos.checked = true;
         document.give_form.submit();
       };
