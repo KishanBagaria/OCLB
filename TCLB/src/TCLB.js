@@ -77,12 +77,15 @@ const HAS_100K_LLAMAS = [
   'savagefrog',
   'seviyummy',
   'shintaurashura',
+  'spook-a-palooza',
   'thegalleryofeve',
   'timing2',
   'toby512',
   'unibat',
   'vibrant-snow',
   'vibrantsnow',
+  'wytherwing',
+  'zestylimey',
 ];
 const lastStates = {};
 const devIDs = {};
