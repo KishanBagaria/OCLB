@@ -41,7 +41,7 @@ var TITLES = {
     err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
   }
 };
-var HAS_100K_LLAMAS = ['aenea-jones', 'anpcreations', 'championx91', 'chateaugrief', 'cheriibat', 'coccineus', 'damaimikaz', 'darksena', 'derfeldwebel', 'epicsaveroom', 'eve-jennifer', 'evuie', 'finakiyomo', 'fizzypinkbubbles', 'iamsorry87', 'internetwaifu', 'ioulaum', 'kalmakamala', 'leonorachris', 'lombarsi', 'luke-crowe', 'metorou-de', 'naiuou', 'natures-studio', 'niotabunny', 'novakaru', 'savagefrog', 'seviyummy', 'shintaurashura', 'spook-a-palooza', 'thegalleryofeve', 'timing2', 'toby512', 'unibat', 'vibrant-snow', 'vibrantsnow', 'wytherwing', 'zestylimey'];
+var HAS_100K_LLAMAS = ['aenea-jones', 'anpcreations', 'championx91', 'chateaugrief', 'cheriibat', 'coccineus', 'damaimikaz', 'darksena', 'derfeldwebel', 'epicsaveroom', 'eve-jennifer', 'evuie', 'finakiyomo', 'fizzypinkbubbles', 'iamsorry87', 'internetwaifu', 'ioulaum', 'kalmakamala', 'koiransielu', 'leonorachris', 'lombarsi', 'luke-crowe', 'metorou-de', 'naiuou', 'natures-studio', 'niotabunny', 'novakaru', 'savagefrog', 'seviyummy', 'shintaurashura', 'spook-a-palooza', 'thegalleryofeve', 'timing2', 'toby512', 'tree-pencil', 'unibat', 'vibrant-snow', 'vibrantsnow', 'wytherwing', 'zestylimey'];
 var lastStates = {};
 var devIDs = {};
 try {
