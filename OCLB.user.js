@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         4.5.11
+// @version         5.0.0
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -30,7 +30,7 @@ function addJS(source) {
   document.body.appendChild(s).remove();
 }
 addJS(function () {
-  var VERSION = '4.5.11',
+  var VERSION = '5.0.0',
     IMG_1X = {
       ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
       SPAM: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAVCAMAAACE9bUqAAAAe1BMVEUAMmb0zTM4DRCcX0HOt4ifSyxmAADMmWZlOCSojjDMiGGPPSFlAADVs5vElXfUp6oAAC5KR0NPNTyeSi6fgHYgH0+dX0Cbg4AAMWaZZmara2a4dG4/QFLHik9jCQ13Tkw6KUUAADMILVRLEhbMj22KSSgsDg0tR2YAKmIz6elIAAAAj0lEQVR4AX3LBRrDMAxDYSdlGDMz3P+Es6tF4/1lva+S/SL/OeeaS+y014JFOKJIgE9cOAhfXB3GafPLR4HuKI7jdqkStdnuBPa9WB0RBonpo1xihZ1QXgMMURAiM45gci8rfAaz+WIppqZ1bdJUbwz4JpQWUAWh5MHB+xMLdk9nb7TkgBU6SsuVO2eU7JcbjM8Lv+nDU0gAAAAASUVORK5CYII=',
@@ -208,11 +208,11 @@ addJS(function () {
 
     var getToken = function (document) {
       var scripts = document.scripts;
-      for (let i = 0; i < document.scripts.length; i++) {
-        const current = scripts[i];
+      for (var i = 0; i < document.scripts.length; i++) {
+        var current = scripts[i];
         if (current.innerHTML.includes('window.__CSRF_TOKEN__ ')) {
-          const htmlChunks = current.innerHTML.split('window.__CSRF_TOKEN__ ');
-          const splitForToken = htmlChunks[1].split(/'/);
+          var htmlChunks = current.innerHTML.split('window.__CSRF_TOKEN__ ');
+          var splitForToken = htmlChunks[1].split(/'/);
           return splitForToken[1];
         }
       }
