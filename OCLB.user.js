@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | kishan-bagaria.deviantart.com
-// @version         5.0.0
+// @version         4.5.11
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -30,7 +30,7 @@ function addJS(source) {
   document.body.appendChild(s).remove();
 }
 addJS(function () {
-  var VERSION = '5.0.0',
+  var VERSION = '4.5.11',
     IMG_1X = {
       ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
       SPAM: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAVCAMAAACE9bUqAAAAe1BMVEUAMmb0zTM4DRCcX0HOt4ifSyxmAADMmWZlOCSojjDMiGGPPSFlAADVs5vElXfUp6oAAC5KR0NPNTyeSi6fgHYgH0+dX0Cbg4AAMWaZZmara2a4dG4/QFLHik9jCQ13Tkw6KUUAADMILVRLEhbMj22KSSgsDg0tR2YAKmIz6elIAAAAj0lEQVR4AX3LBRrDMAxDYSdlGDMz3P+Es6tF4/1lva+S/SL/OeeaS+y014JFOKJIgE9cOAhfXB3GafPLR4HuKI7jdqkStdnuBPa9WB0RBonpo1xihZ1QXgMMURAiM45gci8rfAaz+WIppqZ1bdJUbwz4JpQWUAWh5MHB+xMLdk9nb7TkgBU6SsuVO2eU7JcbjM8Lv+nDU0gAAAAASUVORK5CYII=',
@@ -206,17 +206,18 @@ addJS(function () {
       }
     };
 
-    var getToken = function (document) {
-      var scripts = document.scripts;
-      for (var i = 0; i < document.scripts.length; i++) {
-        var current = scripts[i];
-        if (current.innerHTML.includes('window.__CSRF_TOKEN__ ')) {
-          var htmlChunks = current.innerHTML.split('window.__CSRF_TOKEN__ ');
-          var splitForToken = htmlChunks[1].split(/'/);
-          return splitForToken[1];
-        }
+      var getToken = function(document) {
+          var scripts = document.scripts;
+          for (let i = 0; i < document.scripts.length; i++) {
+              let current = scripts[i];
+              if (current.innerHTML.includes('window.__CSRF_TOKEN__ ')) {
+                  let htmlChunks = current.innerHTML.split('window.__CSRF_TOKEN__ ');
+                  let splitForToken = htmlChunks[1].split(/'/);
+                  return splitForToken[1];
+              }
+          }
+
       }
-    };
 
     var getLoggedInDeviantName = function () {
       if (window.deviantART && window.deviantART.deviant) {
@@ -232,6 +233,7 @@ addJS(function () {
     var loggedInDev = getLoggedInDeviantName();
 
     var setButtonState = function (llamaButton, className, title) {
+
       llamaButton.className = 'oclb oclb-' + className;
       if (!title) title = TITLES[className];
       if (title) llamaButton.title = title;
@@ -271,70 +273,72 @@ addJS(function () {
       return document.body.appendChild(iframe);
     };
 
-    var processLlamaGiven = function (token, devNameReg, devName, iframe) {
-      var url = 'https://www.deviantart.com/_napi/shared_api/give_llama';
-      var params = JSON.stringify({
-        foruser: devNameReg,
-        csrf_token: token,
-      });
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', url, true);
-      xhr.setRequestHeader('Accept', 'application/json');
-      xhr.setRequestHeader('Content-Type', 'application/json');
+    var llamaButtonClicked = function (event) {
+        event.stopPropagation();
+        if (!$includes(['give', 'error', 'spam'], this.className.slice(10))) return; // 10 === 'oclb oclb-'.length
+        var devName = this.getAttribute('devName');
+        var devNameReg = this.getAttribute('devNameReg');
+        setButtonsState(devName, 'giving');
 
-      xhr.onload = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (!xhr.responseText.includes('errorDescription')) {
-            clearTimeout(errorTimeouts[devName]);
-            setButtonsState(devName, 'success', 'success');
-            if (iframe) {
-              iframe.remove();
-            }
-            return;
-          } else if (xhr.response.includes('errorDescription') && xhr.responseText.includes('quickly')) {
-            clearTimeout(errorTimeouts[devName]);
-            setButtonsState(devName, 'spam');
-            if (iframe) {
-              iframe.remove();
-            }
-            return;
-          }
+        var token = getToken(document); //get token from normal page if applicable, much faster this way
+        var iframe = null;
+
+        if (token) {
+            processLlamaGiven(token, devNameReg, devName);
+        } else {
+            var userUrl = 'https://www.deviantart.com/' + devName;
+            iframe = insertInvisibleIframe(userUrl, 'oclb-frame-' + devName);
+            iframe.addEventListener("load", function() {
+                token = getToken(iframe.contentDocument);
+                processLlamaGiven(token, devNameReg, devName, iframe);
+            });
         }
-        if (iframe) {
-          iframe.remove();
-        }
+        clearTimeout(errorTimeouts[devName]);
+        errorTimeouts[devName] = setTimeout(function () {
+            if (iframe) {
+               iframe.remove();
+            }
+            setButtonsState(devName, 'error', 'Timeout');
+        }, 45e3);
+    };
+
+      var processLlamaGiven = function (token, devNameReg, devName, iframe) {
+          var url = 'https://www.deviantart.com/_napi/shared_api/give_llama';
+            var params = JSON.stringify({
+                foruser: devNameReg,
+                csrf_token: token
+            });
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.onload = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (!xhr.responseText.includes('errorDescription')) {
+                        clearTimeout(errorTimeouts[devName]);
+                        setButtonsState(devName, 'success', 'success');
+                        if (iframe) {
+                            iframe.remove();
+                        }
+                        return;
+                    }
+                    else if (xhr.response.includes('errorDescription') && xhr.responseText.includes("quickly")) {
+                        clearTimeout(errorTimeouts[devName]);
+                        setButtonsState(devName, 'spam');
+                        if (iframe) {
+                            iframe.remove();
+                        }
+                        return;
+                    }
+                }
+                if (iframe) {
+                    iframe.remove();
+                }
+            };
+
+            xhr.send(params);
       };
-
-      xhr.send(params);
-    };
-
-    var llamaButtonClicked = function () {
-      if (!$includes(['give', 'error', 'spam'], this.className.slice(10))) return; // 10 === 'oclb oclb-'.length
-      var devName = this.getAttribute('devName');
-      var devNameReg = this.getAttribute('devNameReg');
-      setButtonsState(devName, 'giving');
-
-      var token = getToken(document); // get token from normal page if applicable, much faster this way
-      var iframe = null;
-
-      if (token) {
-        processLlamaGiven(token, devNameReg, devName);
-      } else {
-        var userUrl = 'https://www.deviantart.com/' + devName;
-        iframe = insertInvisibleIframe(userUrl, 'oclb-frame-' + devName);
-        iframe.addEventListener('load', function () {
-          token = getToken(iframe.contentDocument);
-          processLlamaGiven(token, devNameReg, devName, iframe);
-        });
-      }
-      clearTimeout(errorTimeouts[devName]);
-      errorTimeouts[devName] = setTimeout(function () {
-        if (iframe) {
-          iframe.remove();
-        }
-        setButtonsState(devName, 'error', 'Timeout');
-      }, 45e3);
-    };
 
     var xhrCounter = 0;
     var get = function (url, callbacks) {
@@ -359,22 +363,21 @@ addJS(function () {
       }
     };
     var getGiveMenu = function (devName, callback) {
-      get('/global/difi/?c[]="User","getGiveMenu",["' + devName + '"]&t=json&' + ~~(Date.now() / 1e4), {
+      get('https://www.deviantart.com/_napi/da-user-profile/api/give_menu/status?username=' + devName, {
         success: function () {
-          var regexResult = /data-userid=\\"(\d+?)\\"/.exec(this);
-          if (!regexResult) {
+            var resultJSON = JSON.parse(this);
+          if (!this || this.includes('fail')) {
+              console.log('============ Error getting llama status! =====================');
             callback(0, 'unknown', TITLES.unknown.err_dev_id);
             return;
           }
-          var devID = regexResult[1];
-          if (this.includes('Already gave a Llama')) {
-            callback(devID, 'already');
-          } else if (this.includes('Give a <span>Llama Badge')) {
-            callback(devID, 'give');
-          } else if (this.includes('Has Llamas enough for love')) {
-            callback(devID, 'enough');
+
+          if (!resultJSON['canGiveLlama']) {
+            callback(devIDs[devName], 'already');
+          } else if (resultJSON['canGiveLlama']) {
+            callback(devIDs[devName], 'give');
           } else {
-            callback(devID, 'unknown', TITLES.unknown.err_server_response);
+            callback(devIDs[devName], 'unknown', TITLES.unknown.err_server_response);
           }
         },
         error: function () {
@@ -417,24 +420,29 @@ addJS(function () {
     var getDevName = function (link, needLowerCase) {
       var eclipseUsername = link.getAttribute('data-username');
       if (eclipseUsername && needLowerCase) return eclipseUsername.toLowerCase();
-      if (eclipseUsername && !needLowerCase) return eclipseUsername;
+        if (eclipseUsername && !needLowerCase) return eclipseUsername;
       var devNameOld = /([a-zA-Z0-9-]+)\.deviantart\.com/.exec(link.href);
       if (devNameOld && devNameOld[1] !== 'www') {
-        if (needLowerCase) {
-          return devNameOld[1].toLowerCase();
-        }
-        return devNameOld[1];
+          if (needLowerCase) {
+              return devNameOld[1].toLowerCase();
+          } else {
+              return devNameOld[1];
+          }
+
       }
       var devNameNew = /www\.deviantart\.com\/([a-zA-Z0-9-]+)/.exec(link.href);
       if (devNameNew) {
-        if (needLowerCase) {
-          return devNameNew[1].toLowerCase();
-        }
-        return devNameNew[1];
+          if (needLowerCase) {
+              return devNameNew[1].toLowerCase();
+          } else {
+              return devNameNew[1];
+          }
+
       }
     };
 
     var addLlamaButton = function (devNameLink) {
+
       if (devNameLink.className.includes('banned')) return;
       var devName = getDevName(devNameLink, true);
       var devNameReg = getDevName(devNameLink, false);
@@ -443,7 +451,7 @@ addJS(function () {
       if (devName === loggedInDev) return;
       var llamaButton = document.createElement('span');
       llamaButton.setAttribute('devName', devName);
-      llamaButton.setAttribute('devNameReg', devNameReg);
+        llamaButton.setAttribute('devNameReg', devNameReg);
 
       initLlamaButton(llamaButton, devName);
       var refEl = setting('showPos') === 'before' ? devNameLink : devNameLink.nextSibling;
