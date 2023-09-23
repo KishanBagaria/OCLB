@@ -532,9 +532,14 @@ addJS(function () {
         };
 
         var addLlamaButton = function (devNameLink) {
+            var isSpan = false
+            if (devNameLink.nodeType === Node.ELEMENT_NODE &&
+                devNameLink.tagName.toLowerCase() === 'span') {
+                isSpan = true
+            }
             if (devNameLink.className.includes('banned')) return;
-            var devName = getDevName(devNameLink, true);
-            var devNameReg = getDevName(devNameLink, false);
+            var devName = isSpan ? devNameLink.innerText : getDevName(devNameLink, true);
+            var devNameReg = isSpan ? devNameLink.innerText : getDevName(devNameLink, false);
 
             if (!devName) return;
             if (devName === loggedInDev) return;
@@ -635,7 +640,11 @@ addJS(function () {
             );
             var addEverywhere = function () {
                 var badgesLinkSelector = 'a[href*=".deviantart.com/"][href*="/badges/"]';
-                waitForElements(document.body, badgesLinkSelector + ',' + usernameLinkSelector, addLlamaButton);
+                var watchersSelector = '#watchers span'
+                var watchingSelector = '#watching span'
+                waitForElements(document.body, badgesLinkSelector + ',' + usernameLinkSelector +
+                    (document.querySelectorAll(watchersSelector).length > 0 ? ',' + watchersSelector : '') +
+                    (document.querySelectorAll(watchingSelector).length > 0 ? ',' + watchingSelector : ''), addLlamaButton);
             };
             var addInCatBar = function () {
                 var devNameLink = document.querySelector('div.gruserbadge ' + usernameLinkSelector);
