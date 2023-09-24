@@ -12,7 +12,7 @@
 // @grant           GM_setValue
 // @grant           unsafeWindow
 // @run-at          document-end
-// @downloadURL     https://raw.githubusercontent.com/KishanBagaria/OCLB/master/OCLB.user.jsmodals
+// @downloadURL     https://raw.githubusercontent.com/KishanBagaria/OCLB/master/OCLB.user.js
 // @updateURL       https://raw.githubusercontent.com/KishanBagaria/OCLB/master/OCLB.user.js
 // ==/UserScript==
 
