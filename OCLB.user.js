@@ -759,7 +759,7 @@ addJS(function () {
                 }
             });
         } else if (window.location.host !== 'llamatrade.deviantart.com') {
-            if (loggedInDev || window.location.href.includes('/notifications/')) addLlamaButtonsInDA();
+            if (loggedInDev || window.location.href.includes('/notifications')) addLlamaButtonsInDA();
         }
     } catch (err) {
         var heading = 'One Click Llama Button v' + VERSION + ' encountered an error:\n';
