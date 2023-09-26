@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | https://www.deviantart.com/kishan-bagaria
-// @version         6.0.0
+// @version         6.0.1
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -37,7 +37,7 @@ function addJS(source) {
   document.body.appendChild(s).remove();
 }
 addJS(function () {
-  var VERSION = '6.0.0',
+  var VERSION = '6.0.1',
     IMG_1X = {
       ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
       SPAM: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAVCAMAAACE9bUqAAAAe1BMVEUAMmb0zTM4DRCcX0HOt4ifSyxmAADMmWZlOCSojjDMiGGPPSFlAADVs5vElXfUp6oAAC5KR0NPNTyeSi6fgHYgH0+dX0Cbg4AAMWaZZmara2a4dG4/QFLHik9jCQ13Tkw6KUUAADMILVRLEhbMj22KSSgsDg0tR2YAKmIz6elIAAAAj0lEQVR4AX3LBRrDMAxDYSdlGDMz3P+Es6tF4/1lva+S/SL/OeeaS+y014JFOKJIgE9cOAhfXB3GafPLR4HuKI7jdqkStdnuBPa9WB0RBonpo1xihZ1QXgMMURAiM45gci8rfAaz+WIppqZ1bdJUbwz4JpQWUAWh5MHB+xMLdk9nb7TkgBU6SsuVO2eU7JcbjM8Lv+nDU0gAAAAASUVORK5CYII=',
@@ -310,7 +310,13 @@ addJS(function () {
         iframe = insertInvisibleIframe(userUrl, 'oclb-frame-' + devName);
         iframe.addEventListener('load', function () {
           token = getToken(iframe.contentDocument);
-          processLlamaGiven(token, devNameReg, devName, iframe);
+          if (!token) {
+            getCsrfToken().then((csrfToken) => {
+              processLlamaGiven(csrfToken, devNameReg, devName, iframe);
+            });
+          } else {
+            processLlamaGiven(token, devNameReg, devName, iframe);
+          }
         });
       }
       clearTimeout(errorTimeouts[devName]);
@@ -540,6 +546,13 @@ addJS(function () {
       var devNameReg = isSpan ? devNameLink.innerText : getDevName(devNameLink, false);
 
       if (!devName) return;
+      if (!loggedInDev) {
+        document.cookie.split(';').forEach(function (c) {
+          if (c.split('=')[0].trim() === 'userinfo') {
+            loggedInDev = JSON.parse(decodeURIComponent(c).split(';')[1]).username.toLowerCase();
+          }
+        });
+      }
       if (devName === loggedInDev) return;
       var llamaButton = document.createElement('span');
       llamaButton.setAttribute('devName', devName);
@@ -638,8 +651,8 @@ addJS(function () {
       );
       var addEverywhere = function () {
         var badgesLinkSelector = 'a[href*=".deviantart.com/"][href*="/badges/"]';
-        var watchersSelector = '#watchers span';
-        var watchingSelector = '#watching span';
+        var watchersSelector = '#watchers div > span';
+        var watchingSelector = '#watching div > span';
         waitForElements(document.body, badgesLinkSelector + ',' + usernameLinkSelector +
                     (document.querySelectorAll(watchersSelector).length > 0 ? ',' + watchersSelector : '') +
                     (document.querySelectorAll(watchingSelector).length > 0 ? ',' + watchingSelector : ''), addLlamaButton);
@@ -757,7 +770,7 @@ addJS(function () {
         }
       });
     } else if (window.location.host !== 'llamatrade.deviantart.com') {
-      if (loggedInDev || window.location.href.includes('/notifications/')) addLlamaButtonsInDA();
+      if (loggedInDev || window.location.href.includes('/notifications')) addLlamaButtonsInDA();
     }
   } catch (err) {
     var heading = 'One Click Llama Button v' + VERSION + ' encountered an error:\n';
