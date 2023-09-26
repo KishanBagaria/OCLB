@@ -548,6 +548,13 @@ addJS(function () {
             var devNameReg = isSpan ? devNameLink.innerText : getDevName(devNameLink, false);
 
             if (!devName) return;
+            if (!loggedInDev) {
+                document.cookie.split(';').forEach(function (c) {
+                    if (c.split('=')[0].trim() === 'userinfo') {
+                        loggedInDev = JSON.parse(decodeURIComponent(c).split(';')[1]).username.toLowerCase();
+                    }
+                });
+            }
             if (devName === loggedInDev) return;
             var llamaButton = document.createElement('span');
             llamaButton.setAttribute('devName', devName);
