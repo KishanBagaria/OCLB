@@ -329,7 +329,7 @@ addJS(function () {
     };
 
     var processLlamaGiven = function (token, devNameReg, devName, iframe) {
-      var url = 'https://www.deviantart.com/_napi/shared_api/give_llama';
+      var url = 'https://www.deviantart.com/_puppy/dashared/give_llama';
       var params = JSON.stringify({
         foruser: devNameReg,
         csrf_token: token,
