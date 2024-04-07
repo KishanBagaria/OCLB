@@ -101,6 +101,7 @@ addJS(function () {
       'alitn',
       'anpcreations',
       'autumniv',
+      'beckykidus',
       'canonics',
       'championx91',
       'chateaugrief',
