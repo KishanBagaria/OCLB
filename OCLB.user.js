@@ -660,9 +660,13 @@ addJS(function () {
         var badgesLinkSelector = 'a[href*=".deviantart.com/"][href*="/badges/"]';
         var watchersSelector = '#watchers div > span';
         var watchingSelector = '#watching div > span';
+        var membersSelector = '#group_members div > span';
+        var adminSelector = '#group_admins div > span';
         waitForElements(document.body, badgesLinkSelector + ',' + usernameLinkSelector +
                     (document.querySelectorAll(watchersSelector).length > 0 ? ',' + watchersSelector : '') +
-                    (document.querySelectorAll(watchingSelector).length > 0 ? ',' + watchingSelector : ''), addLlamaButton);
+                    (document.querySelectorAll(watchingSelector).length > 0 ? ',' + watchingSelector : '') +
+                    (document.querySelectorAll(membersSelector).length > 0 ? ',' + membersSelector : '') +
+                    (document.querySelectorAll(adminSelector).length > 0 ? ',' + adminSelector : ''), addLlamaButton);
       };
       var addInCatBar = function () {
         var devNameLink = document.querySelector('div.gruserbadge ' + usernameLinkSelector);
