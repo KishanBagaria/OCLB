@@ -3,11 +3,12 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | https://www.deviantart.com/kishan-bagaria
-// @version         6.0.3
+// @version         6.0.4
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
 // @match           *://kishanbagaria.com/userscripts/one-click-llama-button/*
+// @match           *://kishan.org/userscripts/one-click-llama-button/*
 // @grant           GM_getValue
 // @grant           GM_setValue
 // @grant           unsafeWindow
@@ -37,7 +38,7 @@ function addJS(source) {
   document.body.appendChild(s).remove();
 }
 addJS(function () {
-  var VERSION = '6.0.3',
+  var VERSION = '6.0.4'
     IMG_1X = {
       ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
       SPAM: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAVCAMAAACE9bUqAAAAe1BMVEUAMmb0zTM4DRCcX0HOt4ifSyxmAADMmWZlOCSojjDMiGGPPSFlAADVs5vElXfUp6oAAC5KR0NPNTyeSi6fgHYgH0+dX0Cbg4AAMWaZZmara2a4dG4/QFLHik9jCQ13Tkw6KUUAADMILVRLEhbMj22KSSgsDg0tR2YAKmIz6elIAAAAj0lEQVR4AX3LBRrDMAxDYSdlGDMz3P+Es6tF4/1lva+S/SL/OeeaS+y014JFOKJIgE9cOAhfXB3GafPLR4HuKI7jdqkStdnuBPa9WB0RBonpo1xihZ1QXgMMURAiM45gci8rfAaz+WIppqZ1bdJUbwz4JpQWUAWh5MHB+xMLdk9nb7TkgBU6SsuVO2eU7JcbjM8Lv+nDU0gAAAAASUVORK5CYII=',
@@ -100,6 +101,7 @@ addJS(function () {
       'alitn',
       'anpcreations',
       'autumniv',
+      'beckykidus',
       'canonics',
       'championx91',
       'chateaugrief',
@@ -298,6 +300,7 @@ addJS(function () {
     };
 
     var llamaButtonClicked = function (event) {
+      event.preventDefault();
       event.stopPropagation();
       if (!$includes(['give', 'error', 'spam'], this.className.slice(10))) return; // 10 === 'oclb oclb-'.length
       var devName = this.getAttribute('devName');
@@ -657,9 +660,13 @@ addJS(function () {
         var badgesLinkSelector = 'a[href*=".deviantart.com/"][href*="/badges/"]';
         var watchersSelector = '#watchers div > span';
         var watchingSelector = '#watching div > span';
+        var membersSelector = '#group_members div > span';
+        var adminSelector = '#group_admins div > span';
         waitForElements(document.body, badgesLinkSelector + ',' + usernameLinkSelector +
                     (document.querySelectorAll(watchersSelector).length > 0 ? ',' + watchersSelector : '') +
-                    (document.querySelectorAll(watchingSelector).length > 0 ? ',' + watchingSelector : ''), addLlamaButton);
+                    (document.querySelectorAll(watchingSelector).length > 0 ? ',' + watchingSelector : '') +
+                    (document.querySelectorAll(membersSelector).length > 0 ? ',' + membersSelector : '') +
+                    (document.querySelectorAll(adminSelector).length > 0 ? ',' + adminSelector : ''), addLlamaButton);
       };
       var addInCatBar = function () {
         var devNameLink = document.querySelector('div.gruserbadge ' + usernameLinkSelector);
