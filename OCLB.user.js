@@ -98,6 +98,7 @@ addJS(function () {
     },
     HAS_100K_LLAMAS = [
       'aenea-jones',
+      'agnosticdragon',
       'alitn',
       'anpcreations',
       'autumniv',
