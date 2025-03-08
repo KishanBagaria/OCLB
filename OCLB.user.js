@@ -154,7 +154,7 @@ addJS(function () {
       'vibrantsnow',
       'wytherwing',
       'zestylimey',
-      'ZjeroXytz',
+      'zjeroxytz',
     ],
     DEFAULTS = {
       showIn: '*',
