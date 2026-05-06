@@ -20,9 +20,9 @@
 // Additional Credits:
 // Code Update      Noushad Bhuiyan | https://www.fiverr.com/web_coder_nsd | https://www.deviantart.com/noushadbug
 // Code Update      LlanellaWhatCake | https://www.deviantart.com/llanellawhatcake
+// Code Update      Liamb135 | https://www.deviantart.com/liamb135
 // Troubleshooter   Chipster-roo | https://www.deviantart.com/chipster-roo
 // 100kllamas       AgnosticDragon | https://www.deviantart.com/agnosticdragon | https://www.deviantart.com/100kllamas
-// Patreon          Liamb135 | https://www.deviantart.com/liamb135
 
 try {
   gmSet = GM_setValue; // eslint-disable-line camelcase
@@ -172,10 +172,9 @@ addJS(function () {
     xhrCallbacks = {},
     xdCommunicator;
 
-  // CSRF Token Cache Variables (from v6.6.0)
   var csrfTokenCache = null;
   var csrfTokenCacheTime = 0;
-  var CSRF_CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+  var CSRF_CACHE_DURATION = 30 * 60 * 1000;
 
   try {
     if (!String.prototype.endsWith) {
@@ -200,8 +199,6 @@ addJS(function () {
         return this.indexOf(search, start) !== -1;
       };
     }
-    // Not polyfilling Array#includes because DA has buggy JS that
-    // breaks the notification center in older browsers
     var $includes = function (array, search) {
       return array.indexOf(search) !== -1;
     };
@@ -214,7 +211,6 @@ addJS(function () {
     var addCSS = function (css) {
       document.head.appendChild(document.createElement('style')).textContent = css;
     };
-    // taken from: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/storage/localstorage.js
     var isLSSupported = (function () {
       var mod = 'ls-supported';
       try {
@@ -245,10 +241,8 @@ addJS(function () {
     };
 
     var getToken = function (document) {
-      // Try multiple methods to get the CSRF token
       var token = null;
 
-      // Check scripts for __CSRF_TOKEN__
       var scripts = document.scripts;
       if (scripts) {
         for (let i = 0; i < scripts.length; i++) {
@@ -262,15 +256,13 @@ addJS(function () {
         }
       }
 
-      // Check logout form
       if (!token) {
         try {
           var logoutForm = document.querySelector("#logout-form input[type='hidden']");
           if (logoutForm) token = logoutForm.value;
         } catch (e) {}
       }
-
-      // Check for CSRF token in meta tags
+      
       if (!token) {
         try {
           var metaToken = document.querySelector('meta[name="csrf-token"]');
@@ -342,7 +334,6 @@ addJS(function () {
       var devNameReg = this.getAttribute('devNameReg');
       setButtonsState(devName, 'giving');
 
-      // Try to use cached token immediately
       getCsrfToken().then(function(token) {
         if (!token) {
           setButtonsState(devName, 'token_miss', 'CSRF token not found. Please refresh the page.');
@@ -380,7 +371,6 @@ addJS(function () {
                 (response.errorDescription.includes('quickly') ||
                  response.errorDescription.includes('Whoa there') ||
                  response.errorDescription.includes('spam filter'))) {
-              // This is a spam/rate-limit error
               clearTimeout(errorTimeouts[devName]);
               setButtonsState(devName, 'spam');
               if (iframe) {
@@ -399,10 +389,8 @@ addJS(function () {
               return;
             }
           } catch (e) {
-            // JSON parse failed, likely not a valid response
           }
         }
-        // If we get here, it's an unknown error
         clearTimeout(errorTimeouts[devName]);
         setButtonsState(devName, 'error');
         if (iframe) {
@@ -436,29 +424,24 @@ addJS(function () {
       }
     };
 
-    // Enhanced getCsrfToken function
     const getCsrfToken = async () => {
-      // Check if we have a valid cached token
       var now = Date.now();
       if (csrfTokenCache && (now - csrfTokenCacheTime) < CSRF_CACHE_DURATION) {
         return csrfTokenCache;
       }
 
-      // Clear cache on login state change
       var currentLoggedInDev = getLoggedInDeviantName();
       var prevLoggedInDev = storage('get', 'oclb_last_user');
       if (currentLoggedInDev !== prevLoggedInDev) {
         csrfTokenCache = null;
         csrfTokenCacheTime = 0;
         storage('set', 'oclb_last_user', currentLoggedInDev);
-        // Clear stored llama states when user changes
         Object.keys(lastStates).forEach(function(key) {
           delete lastStates[key];
         });
       }
 
       try {
-        // Try to get token from current page first
         var token = getToken(document);
         if (token) {
           csrfTokenCache = token;
@@ -466,12 +449,10 @@ addJS(function () {
           storage('set', 'cached_csrf', token);
           return token;
         }
-
-        // If not found, try fetching from a reliable DA page
         var apiUrl = 'https://www.deviantart.com/';
         var response = await fetch(apiUrl, {
           credentials: 'include',
-          cache: 'no-store' // Prevent caching issues
+          cache: 'no-store'
         });
 
         if (!response.ok) {
@@ -482,7 +463,6 @@ addJS(function () {
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = htmlContent;
 
-        // Try multiple selectors for the CSRF token
         var tokenInput = tempDiv.querySelector("#logout-form input[type='hidden']") ||
           tempDiv.querySelector("input[name='validate_token']") ||
           tempDiv.querySelector("[name='csrf_token']");
@@ -494,7 +474,6 @@ addJS(function () {
           return tokenInput.value;
         }
 
-        // If still not found, try parsing scripts
         var tokenFromScripts = getToken(tempDiv);
         if (tokenFromScripts) {
           csrfTokenCache = tokenFromScripts;
@@ -507,7 +486,6 @@ addJS(function () {
         console.error('Error fetching CSRF token:', error);
       }
 
-      // Try to get from session storage
       try {
         var sessionToken = window.sessionStorage.getItem('csrf_token');
         if (sessionToken) {
@@ -545,13 +523,11 @@ addJS(function () {
               },
             });
           } else {
-            // Handle the case where CSRF token is still not found
             console.error('CSRF token not found.');
             setButtonsState(devName, 'token_miss', 'Token not found! Refresh and retry..');
           }
         })
         .catch((error) => {
-          // Handle any errors that occurred during the process
           console.error('Error:', error);
         });
     };
