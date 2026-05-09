@@ -68,7 +68,7 @@ addJS(function() {
     const CSS = STYLE;
     const NO_TRANSITION_STYLE = 'span.oclb{transition:none}';
     const UNKNOWN_TITLE = 'This deviant\'s Llama status is a mystery!';
-    const TOKEN_MISSING_TITLE = 'CSRF token not found. Please refresh the page and try again.';
+    const TOKEN_MISSING_TITLE = 'CSRF token not found. Please clear site data and try again.';
 
     const TITLES = {
         give: 'Give a Llama',
@@ -84,7 +84,7 @@ addJS(function() {
             loading: UNKNOWN_TITLE + ' (Loading...)',
             err_network: UNKNOWN_TITLE + ' (Network error)',
             err_dev_id: UNKNOWN_TITLE + ' (Invalid response, unable to find deviant ID)',
-            err_server_response: UNKNOWN_TITLE + ' (Invalid response, unable to find llama status)'
+            err_server_response: UNKNOWN_TITLE + ' (Llama status error: Invalid server response)'
         }
     };
 
