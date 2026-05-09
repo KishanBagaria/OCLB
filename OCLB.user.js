@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishanbagaria.com | https://www.deviantart.com/kishan-bagaria
-// @version         6.0.9
+// @version         6.1.0
 // @icon            https://kishanbagaria.com/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @match           *://*.sta.sh/*
@@ -37,7 +37,7 @@ function addJS(source) {
 }
 
 addJS(function() {
-    const VERSION = '6.0.9';
+    const VERSION = '6.1.0';
 
     const IMG = {
         ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
