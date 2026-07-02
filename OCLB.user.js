@@ -3,7 +3,7 @@
 // @namespace       http://www.door2windows.com/
 // @description     Adds a give Llama button after the names of every deviant and group.
 // @author          Kishan Bagaria | kishan.org | https://www.deviantart.com/kishan-bagaria
-// @version         6.2.0
+// @version         6.3.0
 // @icon            https://kishan.org/-/oclb.png
 // @match           *://*.deviantart.com/*
 // @grant           GM_getValue
@@ -16,7 +16,7 @@
 
 // Additional Credits
 
-// Code Update      Noushad Bhuiyan  | https://www.fiverr.com/web_coder_nsd        | https://www.deviantart.com/noushadbug
+// Code Update      Noushad Bhuiyan  | https://www.deviantart.com/noushadbug       | https://www.fiverr.com/web_coder_nsd
 // Code Update      LlanellaWhatCake | https://www.deviantart.com/llanellawhatcake |
 // Code Update      Liamb135         | https://www.deviantart.com/liamb135         |
 // Troubleshooter   Chipster-roo     | https://www.deviantart.com/chipster-roo     |
@@ -27,7 +27,7 @@
 
     if (!window.location.host.includes('deviantart.com')) return;
 
-    const VERSION = '6.2.0';
+    const VERSION = '6.3.0';
 
     const IMG = {
         ALREADY: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAmElEQVR4Aa2OxUHFQBCGvxXctQl62jbCBS0lR/qhBC7x5MXXcCrgH/cR8eVme3rTz1FKg7P4zZwesXMvHl9XAP1ZVCcHidzZJowz0cekLVqAWwCJVEbubqOO92FLgxQIrQw/0NGt+GEmWkeYlg/rCc7zC/l501YdtmjxTY/vR+K0pH8bPh9q6w1OCIP3H0Wbnl1c30PO/+AdWxpL8w9v1MsAAAAASUVORK5CYII=',
@@ -102,24 +102,16 @@
         animation: 'true'
     };
 
-    const errorTimeouts = {};
-    const lastStates = {};
-    const devIDs = {};
-    const spamTimeouts = {};
-    const llamaButtonsToUpdate = {};
+    const LLAMA_GIVE_CACHE_DURATION = 30 * 24 * 60 * 60 * 1000;
 
-    let csrfTokenCache = null;
-    let csrfTokenCacheTime = 0;
-    const CSRF_CACHE_DURATION = 30 * 60 * 1000;
+    const humanDelay = () => new Promise(resolve => setTimeout(resolve, Math.random() * 400 + 100));
 
-    let loggedInDev = null;
-
-    let scrollTimeout;
-    let processThrottle = null;
-    let scrollBindDebounce;
-
-    const addCSS = css => {
-        document.head.appendChild(document.createElement('style')).textContent = css;
+    const delayedXHRSend = (xhr, params, callback) => {
+        humanDelay().then(() => {
+            if (params !== undefined) xhr.send(params);
+            else xhr.send();
+            if (callback) callback();
+        });
     };
 
     const isLSSupported = (() => {
@@ -151,6 +143,75 @@
         }
     };
 
+    const getCachedLlamaStatus = devName => {
+        if (!loggedInDev) return null;
+        const raw = storage('get', `llama-status-${loggedInDev}-${devName}`);
+        if (!raw) return null;
+        try {
+            const data = JSON.parse(raw);
+            if (!data || typeof data.status !== 'string') return null;
+            if (data.status === 'already') return data;
+            if (data.status === 'give' && typeof data.timestamp === 'number') {
+                if (Date.now() - data.timestamp < LLAMA_GIVE_CACHE_DURATION) return data;
+                return null;
+            }
+        } catch {}
+        return null;
+    };
+
+    const setCachedLlamaStatus = (devName, status) => {
+        if (!loggedInDev || !status) return;
+        storage('set', `llama-status-${loggedInDev}-${devName}`, JSON.stringify({
+            status,
+            timestamp: Date.now()
+        }));
+    };
+
+    const cleanupOldLlamaCacheEntries = () => {
+        if (!loggedInDev || !isLSSupported) return;
+        const prefix = `llama-status-${loggedInDev}-`;
+        const now = Date.now();
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(prefix)) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    const data = JSON.parse(raw);
+                    if (data && data.status === 'already') continue;
+                    if (data && data.status === 'give' && typeof data.timestamp === 'number') {
+                        if (now - data.timestamp >= LLAMA_GIVE_CACHE_DURATION) {
+                            localStorage.removeItem(key);
+                        }
+                    } else {
+                        localStorage.removeItem(key);
+                    }
+                } catch {
+                    localStorage.removeItem(key);
+                }
+            }
+        }
+    };
+
+    const errorTimeouts = {};
+    const lastStates = {};
+    const devIDs = {};
+    const spamTimeouts = {};
+    const llamaButtonsToUpdate = {};
+
+    let csrfTokenCache = null;
+    let csrfTokenCacheTime = 0;
+    const CSRF_CACHE_DURATION = 30 * 60 * 1000;
+
+    let loggedInDev = null;
+
+    let scrollTimeout;
+    let processThrottle = null;
+    let scrollBindDebounce;
+
+    const addCSS = css => {
+        document.head.appendChild(document.createElement('style')).textContent = css;
+    };
+
     const getLoggedInDeviantName = () => {
         const eclipseElement = document.querySelector('header a[data-username]');
         return eclipseElement?.getAttribute('data-username')?.toLowerCase();
@@ -176,9 +237,7 @@
     const getToken = doc => {
         let token = null;
 
-        const {
-            scripts
-        } = doc;
+        const { scripts } = doc;
         if (scripts) {
             for (const current of scripts) {
                 if (current.innerHTML?.includes('window.__CSRF_TOKEN__')) {
@@ -303,8 +362,10 @@
                 }
 
                 if (!resultJSON.canGiveLlama) {
+                    setCachedLlamaStatus(devName, 'already');
                     callback(devIDs[devName], 'already');
                 } else if (resultJSON.canGiveLlama) {
+                    setCachedLlamaStatus(devName, 'give');
                     callback(devIDs[devName], 'give');
                 } else {
                     callback(devIDs[devName], 'unknown', TITLES.unknown.err_server_response);
@@ -313,7 +374,7 @@
             xhr.onerror = () => {
                 callback(0, 'unknown', TITLES.unknown.err_network);
             };
-            xhr.send();
+            delayedXHRSend(xhr);
         }).catch(error => {
             console.error('Error:', error);
         });
@@ -350,6 +411,7 @@
                     if (!response.error || response.status !== 'error') {
                         clearTimeout(errorTimeouts[devName]);
                         setButtonsState(devName, 'success');
+                        setCachedLlamaStatus(devName, 'already');
 
                         errorTimeouts[devName] = setTimeout(() => {
                             getGiveMenu(devName, (devID, className, title) => {
@@ -371,7 +433,7 @@
             setButtonsState(devName, 'error');
         };
 
-        xhr.send(params);
+        delayedXHRSend(xhr, params);
     };
 
     const setButtonState = (llamaButton, className, title) => {
@@ -382,10 +444,7 @@
 
     const saveLastState = (devName, className, title) => {
         if (className === 'unknown') return;
-        lastStates[devName] = {
-            className,
-            title
-        };
+        lastStates[devName] = { className, title };
     };
 
     const setButtonsState = (devName, className, title, dontTellOtherTabs) => {
@@ -417,17 +476,32 @@
     const askServerForStatus = (llamaButton, devName) => {
         if (Object.hasOwn(llamaButtonsToUpdate, devName)) {
             llamaButtonsToUpdate[devName].push(llamaButton);
-        } else {
-            llamaButtonsToUpdate[devName] = [llamaButton];
-            getGiveMenu(devName, (devID, className, title) => {
-                saveLastState(devName, className, title);
-                if (devID) devIDs[devName] = devID;
-                for (const button of llamaButtonsToUpdate[devName]) {
-                    setButtonState(button, className, title);
-                }
-                delete llamaButtonsToUpdate[devName];
-            });
+            return;
         }
+
+        llamaButtonsToUpdate[devName] = [llamaButton];
+
+        const cached = getCachedLlamaStatus(devName);
+        if (cached) {
+            const { status } = cached;
+            const className = status === 'give' ? 'give' : 'already';
+            const title = className === 'give' ? TITLES.give : TITLES.already;
+            saveLastState(devName, className, title);
+            for (const button of llamaButtonsToUpdate[devName]) {
+                setButtonState(button, className, title);
+            }
+            delete llamaButtonsToUpdate[devName];
+            return;
+        }
+
+        getGiveMenu(devName, (devID, className, title) => {
+            saveLastState(devName, className, title);
+            if (devID) devIDs[devName] = devID;
+            for (const button of llamaButtonsToUpdate[devName]) {
+                setButtonState(button, className, title);
+            }
+            delete llamaButtonsToUpdate[devName];
+        });
     };
 
     const initLlamaButton = (llamaButton, devName) => {
@@ -520,9 +594,9 @@
         return rect.top < window.innerHeight + 1500 && rect.bottom > -1500;
     };
 
-    const getUsernameLinkSelector = () => setting('addForGroups') === 'true' ?
-        'a.username, a[data-username]' :
-        'a.username:not(.group), a[data-username]:not([data-usertype=group])';
+    const getUsernameLinkSelector = () => setting('addForGroups') === 'true'
+        ? 'a.username, a[data-username]'
+        : 'a.username:not(.group), a[data-username]:not([data-usertype=group])';
 
     const getAllSelectors = () => [
         'a[href*=".deviantart.com/"][href*="/badges/"]',
@@ -583,13 +657,8 @@
             scrollTimeout = setTimeout(processVisibleElements, 150);
         };
 
-        window.addEventListener('scroll', onScroll, {
-            passive: true
-        });
-        document.addEventListener('scroll', onScroll, {
-            passive: true,
-            capture: true
-        });
+        window.addEventListener('scroll', onScroll, { passive: true });
+        document.addEventListener('scroll', onScroll, { passive: true, capture: true });
 
         const findAndBindScrollables = () => {
             clearTimeout(scrollBindDebounce);
@@ -599,9 +668,7 @@
                     if (el._oclbScrollBound) continue;
                     if (el.scrollHeight > el.clientHeight && el.clientHeight > 0) {
                         el._oclbScrollBound = true;
-                        el.addEventListener('scroll', onScroll, {
-                            passive: true
-                        });
+                        el.addEventListener('scroll', onScroll, { passive: true });
                     }
                 }
             }, 500);
@@ -611,10 +678,7 @@
 
         new MutationObserver(() => {
             findAndBindScrollables();
-        }).observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+        }).observe(document.body, { childList: true, subtree: true });
     };
 
     const waitForLoggedInDevName = (timeoutMs = 5000) => new Promise(resolve => {
@@ -681,10 +745,7 @@
                     }
                 }
             }
-        }).observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+        }).observe(document.body, { childList: true, subtree: true });
 
         if (showIn === '*') {
             if (window.location.href.endsWith('/badges/')) {
@@ -709,6 +770,9 @@
         if (!loggedInDev) {
             loggedInDev = await waitForLoggedInDevName();
         }
+        if (loggedInDev) {
+            cleanupOldLlamaCacheEntries();
+        }
         if (!loggedInDev && !window.location.href.includes('/notifications')) return;
         addLlamaButtonsInDA();
     };
@@ -719,6 +783,7 @@
         } else {
             loggedInDev = getLoggedInDeviantName();
             if (loggedInDev) {
+                cleanupOldLlamaCacheEntries();
                 addLlamaButtonsInDA();
             } else {
                 initOCLB();
@@ -729,5 +794,4 @@
         console.error(heading, err);
         alert(`${heading}---\n${err}\n---\n\nPlease email a screenshot of this to hi@kishan.info, or post it as a comment on deviantart.com/Kishan-Bagaria (unless someone has already posted the same comment).\n\n---\nURL: ${window.location.href}\nUser-Agent: ${navigator.userAgent}`);
     }
-
 })();
